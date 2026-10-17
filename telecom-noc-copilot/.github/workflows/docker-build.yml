@@ -1,0 +1,59 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "mcp-server/**"
+      - "mock-services/**"
+      - "docker-compose.yml"
+      - ".dockerignore"
+      - ".github/workflows/docker-build.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "mcp-server/**"
+      - "mock-services/**"
+      - "docker-compose.yml"
+      - ".dockerignore"
+      - ".github/workflows/docker-build.yml"
+
+jobs:
+  build-images:
+    name: Validate Docker image builds
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: frontend
+            context: ./frontend
+          - name: backend
+            context: ./backend
+          - name: mcp-server
+            context: ./mcp-server
+          - name: oss-api
+            context: ./mock-services/oss_api
+          - name: telemetry-api
+            context: ./mock-services/telemetry_api
+          - name: deployment-api
+            context: ./mock-services/deployment_api
+          - name: ticketing-api
+            context: ./mock-services/ticketing_api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (no push)
+        run: |
+          echo "TODO: build ${{ matrix.name }} from ${{ matrix.context }} once Dockerfile exists"
+          # docker build -t telecom-noc-copilot/${{ matrix.name }}:ci ${{ matrix.context }}

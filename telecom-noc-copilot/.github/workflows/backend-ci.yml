@@ -1,0 +1,63 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "agent/**"
+      - "mcp-server/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "agent/**"
+      - "mcp-server/**"
+      - ".github/workflows/backend-ci.yml"
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  python-checks:
+    name: Python checks and pytest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          # cache: pip
+          # cache-dependency-path: backend/requirements*.txt
+
+      - name: Install dependencies
+        run: |
+          echo "TODO: pip install -r requirements.txt / requirements-dev.txt"
+          # python -m pip install --upgrade pip
+          # pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          echo "TODO: run ruff / flake8 / pylint"
+          # ruff check .
+
+      - name: Type check
+        run: |
+          echo "TODO: run mypy"
+          # mypy app
+
+      - name: Unit tests
+        run: |
+          echo "TODO: pytest tests/unit"
+          # pytest tests/unit -q
+
+      - name: Integration tests
+        run: |
+          echo "TODO: pytest tests/integration"
+          # pytest tests/integration -q

@@ -1,0 +1,45 @@
+# Skeleton compose file — services to be implemented later.
+# Do not use real secrets here; copy .env.example to .env for local overrides.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    # ports, volumes, and env to be configured later
+    profiles: ["infra"]
+
+  backend:
+    build:
+      context: ./backend
+    # depends_on / ports / env to be configured later
+    profiles: ["app"]
+
+  frontend:
+    build:
+      context: ./frontend
+    # depends_on / ports / env to be configured later
+    profiles: ["app"]
+
+  mcp-server:
+    build:
+      context: ./mcp-server
+    profiles: ["app"]
+
+  oss-api:
+    build:
+      context: ./mock-services/oss_api
+    profiles: ["mocks"]
+
+  telemetry-api:
+    build:
+      context: ./mock-services/telemetry_api
+    profiles: ["mocks"]
+
+  deployment-api:
+    build:
+      context: ./mock-services/deployment_api
+    profiles: ["mocks"]
+
+  ticketing-api:
+    build:
+      context: ./mock-services/ticketing_api
+    profiles: ["mocks"]

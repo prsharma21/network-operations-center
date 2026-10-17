@@ -1,0 +1,89 @@
+name: Deploy AWS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "mcp-server/**"
+      - "infrastructure/terraform/**"
+      - ".github/workflows/deploy-aws.yml"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+
+# Prefer GitHub OIDC → AWS IAM role (no long-lived access keys).
+# Alternatively configure AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY as repository secrets.
+# Never hardcode credentials in this workflow.
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+jobs:
+  deploy:
+    name: Build, push ECR, deploy ECS/Fargate
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # Fallback (do not commit keys): use secrets.AWS_ACCESS_KEY_ID /
+          # secrets.AWS_SECRET_ACCESS_KEY only if OIDC is unavailable.
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push images to ECR
+        run: |
+          echo "TODO: build and push backend/frontend/mcp images to ECR"
+          # IMAGE_TAG=${{ github.sha }}
+          # docker build -t $ECR_REGISTRY/telecom-noc-copilot-backend:$IMAGE_TAG ./backend
+          # docker push $ECR_REGISTRY/telecom-noc-copilot-backend:$IMAGE_TAG
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: Terraform init
+        working-directory: infrastructure/terraform/environments/dev
+        run: |
+          echo "TODO: terraform init"
+          # terraform init
+
+      - name: Terraform plan
+        working-directory: infrastructure/terraform/environments/dev
+        run: |
+          echo "TODO: terraform plan"
+          # terraform plan -out=tfplan
+
+      - name: Terraform apply
+        working-directory: infrastructure/terraform/environments/dev
+        run: |
+          echo "TODO: terraform apply (gated / manual approval via environment)"
+          # terraform apply -auto-approve tfplan
+
+      - name: Update ECS service
+        run: |
+          echo "TODO: force new ECS/Fargate deployment with new task definition image"
+          # aws ecs update-service --cluster ... --service ... --force-new-deployment
