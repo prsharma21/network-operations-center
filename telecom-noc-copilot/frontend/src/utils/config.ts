@@ -8,3 +8,7 @@ export const appConfig = {
   appTitle: import.meta.env.VITE_APP_TITLE?.trim() || 'Telecom NOC Copilot',
   useDemoData: readFlag(import.meta.env.VITE_USE_DEMO_DATA, false),
 } as const
+
+export function canUseDemoFallback(): boolean {
+  return import.meta.env.DEV || appConfig.useDemoData
+}

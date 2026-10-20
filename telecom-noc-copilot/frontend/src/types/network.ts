@@ -3,6 +3,34 @@ export interface SiteRecord {
   site_name: string
   region: string
   status: string
+  technology?: string
+  vendor?: string
+  site_type?: string
+  criticality?: string
+  backhaul_type?: string
+  latitude?: number
+  longitude?: number
+  known_scenario?: string | null
+  synthetic?: boolean
+}
+
+export interface EquipmentRecord {
+  equipment_id: string
+  site_id: string
+  component: string
+  vendor: string
+  software_version: string
+  operational_state: string
+  synthetic?: boolean
+}
+
+export interface TopologyLinkRecord {
+  link_id: string
+  source_id: string
+  target_id: string
+  link_type: string
+  status: string
+  capacity_mbps: number
   synthetic?: boolean
 }
 
@@ -16,6 +44,8 @@ export interface AlarmRecord {
   status: string
   message: string
   scenario_id: string | null
+  source?: string
+  correlation_key?: string
   synthetic?: boolean
 }
 

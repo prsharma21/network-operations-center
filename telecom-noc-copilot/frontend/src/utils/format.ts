@@ -9,6 +9,16 @@ export function formatLatency(value: number | null): string {
   return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value)} ms`
 }
 
+export function formatMbps(value: number | null): string {
+  if (value === null || Number.isNaN(value)) return '—'
+  return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value)} Mbps`
+}
+
+export function formatPercent(value: number | null, digits = 1): string {
+  if (value === null || Number.isNaN(value)) return '—'
+  return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value)}%`
+}
+
 export function formatDateTime(iso: string): string {
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: 'medium',

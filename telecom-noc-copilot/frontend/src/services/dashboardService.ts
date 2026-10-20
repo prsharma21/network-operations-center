@@ -1,7 +1,7 @@
 import { buildDemoDashboard } from '@/services/demo/dashboardDemo'
 import { ApiError, apiGet, isMissingEndpoint } from '@/services/httpClient'
 import type { DashboardSummary, TimeRange } from '@/types/dashboard'
-import { appConfig } from '@/utils/config'
+import { canUseDemoFallback } from '@/utils/config'
 
 /**
  * FastAPI contract used by the Network Health Dashboard.
@@ -9,10 +9,6 @@ import { appConfig } from '@/utils/config'
  * GET /api/v1/dashboard/summary?range=1h|24h|7d
  */
 export const DASHBOARD_SUMMARY_ENDPOINT = '/api/v1/dashboard/summary'
-
-function canUseDemoFallback(): boolean {
-  return import.meta.env.DEV || appConfig.useDemoData
-}
 
 function isDashboardSummary(value: unknown): value is DashboardSummary {
   if (typeof value !== 'object' || value === null) return false

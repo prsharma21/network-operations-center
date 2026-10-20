@@ -13,7 +13,8 @@
     "topology_links": 25,
     "deployment_events": 6,
     "tickets": 15,
-    "known_scenarios": 3
+    "known_scenarios": 3,
+    "runbook_documents": 5
   },
   "scenario_ids": [
     "SCN-OUTAGE-01",

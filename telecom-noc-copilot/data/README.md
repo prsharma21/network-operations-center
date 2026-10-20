@@ -12,6 +12,7 @@ This dataset supports the Day 2 “Generate synthetic telecom data” task in th
 - `tickets/tickets.json`: mock NOC ticket records
 - `scenarios/known_incident_scenarios.json`: outage, congestion and deployment-related fault scenarios
 - `ground_truth/expected_incidents.json`: expected causes and evidence alarm IDs for testing
+- `runbooks/runbook_catalog.json`: labeled synthetic troubleshooting documents for local retrieval
 - `dataset_manifest.json`: counts, seed, version and safety disclaimer
 
 ## Data conventions

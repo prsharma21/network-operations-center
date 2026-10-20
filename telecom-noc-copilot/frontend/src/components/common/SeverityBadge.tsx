@@ -13,9 +13,9 @@ const SEVERITY_TONES: Record<Severity, BadgeTone> = {
   critical: 'critical',
   major: 'major',
   minor: 'minor',
-  warning: 'major',
+  warning: 'warning',
   info: 'info',
-  cleared: 'minor',
+  cleared: 'cleared',
 }
 
 interface SeverityBadgeProps {
@@ -24,9 +24,14 @@ interface SeverityBadgeProps {
 }
 
 export function SeverityBadge({ severity, label }: SeverityBadgeProps) {
+  const text = label ?? SEVERITY_LABELS[severity]
   return (
-    <span className={`badge badge--${SEVERITY_TONES[severity]}`}>
-      {label ?? SEVERITY_LABELS[severity]}
+    <span
+      className={`badge badge--${SEVERITY_TONES[severity]}`}
+      title={`Severity: ${text}`}
+      aria-label={`Severity: ${text}`}
+    >
+      {text}
     </span>
   )
 }

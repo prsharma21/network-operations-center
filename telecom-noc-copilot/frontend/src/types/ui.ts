@@ -13,7 +13,7 @@ export type IconName =
   | 'chevron'
   | 'radar'
 
-export type BadgeTone = 'critical' | 'major' | 'minor' | 'info' | 'neutral' | 'demo'
+export type BadgeTone = 'critical' | 'major' | 'warning' | 'minor' | 'info' | 'cleared' | 'neutral' | 'demo'
 
 export type OperationalStatus =
   | 'active'
@@ -22,6 +22,7 @@ export type OperationalStatus =
   | 'acknowledged'
   | 'in-progress'
   | 'pending'
+  | 'deferred'
   | 'resolved'
   | 'cleared'
   | 'approved'

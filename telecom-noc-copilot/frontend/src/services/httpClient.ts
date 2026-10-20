@@ -12,14 +12,17 @@ export class ApiError extends Error {
   }
 }
 
-interface GetOptions {
+interface RequestOptions {
+  method?: 'GET' | 'POST'
   query?: Record<string, string>
+  body?: unknown
   signal?: AbortSignal
+  timeoutMs?: number
 }
 
-const REQUEST_TIMEOUT_MS = 3000
+const DEFAULT_TIMEOUT_MS = 3000
 
-export async function apiGet<T>(path: string, options: GetOptions = {}): Promise<T> {
+async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const url = new URL(path, `${appConfig.apiBaseUrl}/`)
   if (options.query) {
     for (const [key, value] of Object.entries(options.query)) {
@@ -28,14 +31,19 @@ export async function apiGet<T>(path: string, options: GetOptions = {}): Promise
   }
 
   const controller = new AbortController()
-  const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  const timer = window.setTimeout(() => controller.abort(), options.timeoutMs ?? DEFAULT_TIMEOUT_MS)
   const onOuterAbort = () => controller.abort()
   options.signal?.addEventListener('abort', onOuterAbort)
+
+  const headers: Record<string, string> = { Accept: 'application/json' }
+  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
 
   let response: Response
   try {
     response = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      method: options.method ?? 'GET',
+      headers,
+      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
       signal: controller.signal,
     })
   } catch (error) {
@@ -58,7 +66,28 @@ export async function apiGet<T>(path: string, options: GetOptions = {}): Promise
     )
   }
 
-  return (await response.json()) as T
+  const text = await response.text()
+  if (!text) return {} as T
+  return JSON.parse(text) as T
+}
+
+interface GetOptions {
+  query?: Record<string, string>
+  signal?: AbortSignal
+  timeoutMs?: number
+}
+
+interface PostOptions {
+  signal?: AbortSignal
+  timeoutMs?: number
+}
+
+export async function apiGet<T>(path: string, options: GetOptions = {}): Promise<T> {
+  return apiRequest<T>(path, { ...options, method: 'GET' })
+}
+
+export async function apiPost<T>(path: string, body: unknown = {}, options: PostOptions = {}): Promise<T> {
+  return apiRequest<T>(path, { ...options, method: 'POST', body })
 }
 
 export function isMissingEndpoint(error: unknown): boolean {

@@ -1,0 +1,176 @@
+{
+  "catalog_id": "synthetic-noc-runbooks",
+  "version": "1.0.0",
+  "synthetic": true,
+  "disclaimer": "Labeled synthetic troubleshooting documents for local development. Citations refer only to records in this catalog. This is not a live knowledge base and does not authorize network changes.",
+  "documents": [
+    {
+      "document_id": "RB-BACKHAUL-UNREACHABLE",
+      "title": "Site unreachable and backhaul path checks",
+      "source_ref": "data/runbooks/runbook_catalog.json#RB-BACKHAUL-UNREACHABLE",
+      "technology": ["4G", "5G", "4G+5G"],
+      "alarm_types": ["SITE_UNREACHABLE", "BACKHAUL_LINK_DOWN", "CELL_AVAILABILITY_LOSS"],
+      "kpis": ["latency", "throughput", "dropped-call"],
+      "related_incident_ids": ["INC-OUTAGE-001"],
+      "related_scenario_ids": ["SCN-OUTAGE-01"],
+      "related_postmortems": [],
+      "body": "When a site reports SITE_UNREACHABLE together with BACKHAUL_LINK_DOWN, treat transport as the first evidence class. Confirm whether telemetry latency is unavailable (at or above 900 ms) and whether throughput has dropped to zero. Cell availability loss can be a symptom of a down microwave or fiber path rather than a radio hardware failure. Do not declare a root cause from this document alone.",
+      "steps": [
+        "Record the SITE_UNREACHABLE, BACKHAUL_LINK_DOWN, and CELL_AVAILABILITY_LOSS alarm IDs and timestamps.",
+        "Check site telemetry: latency at or above 900 ms is classified unavailable; throughput near 0 Mbps supports an isolation or backhaul outage pattern.",
+        "Inspect topology for the site-to-aggregation link status before assuming a radio unit fault.",
+        "Compare inventory operational state: in-service radio hardware contradicts a confirmed radio failure.",
+        "Escalate a transport check. Do not execute a live network change from this runbook."
+      ],
+      "kpi_definitions": [
+        {
+          "name": "latency",
+          "definition": "Round-trip service latency reported by site telemetry.",
+          "threshold": "Warning ≥ 80 ms · Critical ≥ 150 ms · Unavailable ≥ 900 ms"
+        },
+        {
+          "name": "throughput",
+          "definition": "Downlink throughput at the site.",
+          "threshold": "Warning ≤ 80 Mbps · Critical ≤ 20 Mbps"
+        }
+      ],
+      "synthetic": true
+    },
+    {
+      "document_id": "RB-RADIO-CONGESTION",
+      "title": "High PRB utilization and congestion symptoms",
+      "source_ref": "data/runbooks/runbook_catalog.json#RB-RADIO-CONGESTION",
+      "technology": ["4G", "5G", "4G+5G"],
+      "alarm_types": ["HIGH_PRB_UTILIZATION", "HIGH_LATENCY", "THROUGHPUT_DEGRADATION", "DROPPED_CALLS_HIGH", "HIGH_UTILIZATION"],
+      "kpis": ["utilization", "latency", "throughput", "dropped-call"],
+      "related_incident_ids": ["INC-CONGESTION-001"],
+      "related_scenario_ids": ["SCN-CONGESTION-01"],
+      "related_postmortems": [],
+      "body": "Busy-hour congestion typically presents as HIGH_PRB_UTILIZATION with elevated latency, reduced throughput, and a rising dropped-call rate. Utilization at or above 92% is the critical band used by this copilot. An uplink that remains up weakens a complete backhaul-outage explanation. This document describes checks only.",
+      "steps": [
+        "Confirm HIGH_PRB_UTILIZATION, HIGH_LATENCY, THROUGHPUT_DEGRADATION, and DROPPED_CALLS_HIGH are correlated on the same site.",
+        "Compare utilization to the local threshold: warning ≥ 70%, critical ≥ 92%.",
+        "Compare latency (warning ≥ 80 ms, critical ≥ 150 ms) and dropped-call rate (warning ≥ 2%, critical ≥ 5%).",
+        "Verify the access link is up. A down backhaul is a different evidence class.",
+        "Capacity actions require recorded human approval elsewhere. This runbook does not change the radio network."
+      ],
+      "kpi_definitions": [
+        {
+          "name": "utilization",
+          "definition": "Radio resource (PRB) utilization percentage.",
+          "threshold": "Warning ≥ 70% · Critical ≥ 92%"
+        },
+        {
+          "name": "dropped-call",
+          "definition": "Dropped-call rate percentage.",
+          "threshold": "Warning ≥ 2% · Critical ≥ 5%"
+        },
+        {
+          "name": "latency",
+          "definition": "Round-trip service latency reported by site telemetry.",
+          "threshold": "Warning ≥ 80 ms · Critical ≥ 150 ms · Unavailable ≥ 900 ms"
+        }
+      ],
+      "synthetic": true
+    },
+    {
+      "document_id": "RB-POST-DEPLOY-KPI",
+      "title": "Post-deployment KPI degradation and configuration mismatch",
+      "source_ref": "data/runbooks/runbook_catalog.json#RB-POST-DEPLOY-KPI",
+      "technology": ["4G", "5G", "4G+5G"],
+      "alarm_types": ["POST_DEPLOYMENT_KPI_DEGRADATION", "CONFIGURATION_MISMATCH", "ACCESSIBILITY_DEGRADATION"],
+      "kpis": ["latency", "throughput", "dropped-call"],
+      "related_incident_ids": ["INC-DEPLOY-001"],
+      "related_scenario_ids": ["SCN-DEPLOY-01"],
+      "related_postmortems": [],
+      "body": "When POST_DEPLOYMENT_KPI_DEGRADATION or CONFIGURATION_MISMATCH follows a recorded software or configuration deployment, review the change window before treating the case as independent congestion. Sequence is suggestive, not proof. Accessibility degradation after rollout should be correlated with the deployment event ID.",
+      "steps": [
+        "Locate the deployment event on the site (change type, versions, timestamp, status).",
+        "List CONFIGURATION_MISMATCH, POST_DEPLOYMENT_KPI_DEGRADATION, and ACCESSIBILITY_DEGRADATION with their source alarm IDs.",
+        "Compare KPI samples after the deployment timestamp against the shared thresholds in the KPI catalog.",
+        "Note contradictory evidence if a PRB congestion alarm is also present; timing overlap is not exclusive proof.",
+        "Rollback or configuration changes require a human approval record. Do not execute them from this page."
+      ],
+      "kpi_definitions": [
+        {
+          "name": "throughput",
+          "definition": "Downlink throughput at the site.",
+          "threshold": "Warning ≤ 80 Mbps · Critical ≤ 20 Mbps"
+        },
+        {
+          "name": "latency",
+          "definition": "Round-trip service latency reported by site telemetry.",
+          "threshold": "Warning ≥ 80 ms · Critical ≥ 150 ms · Unavailable ≥ 900 ms"
+        }
+      ],
+      "synthetic": true
+    },
+    {
+      "document_id": "RB-KPI-THRESHOLDS",
+      "title": "Site KPI warning and critical thresholds",
+      "source_ref": "data/runbooks/runbook_catalog.json#RB-KPI-THRESHOLDS",
+      "technology": ["4G", "5G", "4G+5G"],
+      "alarm_types": ["HIGH_LATENCY", "LOW_THROUGHPUT", "THROUGHPUT_DEGRADATION", "HIGH_UTILIZATION", "HIGH_PRB_UTILIZATION", "DROPPED_CALLS_HIGH"],
+      "kpis": ["latency", "throughput", "utilization", "dropped-call"],
+      "related_incident_ids": ["INC-OUTAGE-001", "INC-CONGESTION-001", "INC-DEPLOY-001"],
+      "related_scenario_ids": ["SCN-OUTAGE-01", "SCN-CONGESTION-01", "SCN-DEPLOY-01"],
+      "related_postmortems": [],
+      "body": "These KPI bands are the single source of truth used by the Telecom NOC Copilot tiles and charts. Latency: warning 80 ms, critical 150 ms, unavailable at or above 900 ms. Throughput: warning 80 Mbps or below, critical 20 Mbps or below. Utilization: warning 70%, critical 92%. Dropped-call rate: warning 2%, critical 5%. Thresholds are classification aids, not diagnoses.",
+      "steps": [
+        "Identify which KPI crossed a warning or critical band.",
+        "Use the same threshold table for every site; do not invent per-vendor limits in the console.",
+        "If latency is at or above 900 ms, treat the sample as unavailable rather than a finite delay.",
+        "Cite the metric_id of the sample you used. Do not present a threshold breach as a verified root cause."
+      ],
+      "kpi_definitions": [
+        {
+          "name": "latency",
+          "definition": "Round-trip service latency reported by site telemetry.",
+          "threshold": "Warning ≥ 80 ms · Critical ≥ 150 ms · Unavailable ≥ 900 ms"
+        },
+        {
+          "name": "throughput",
+          "definition": "Downlink throughput at the site. Lower values are worse.",
+          "threshold": "Warning ≤ 80 Mbps · Critical ≤ 20 Mbps"
+        },
+        {
+          "name": "utilization",
+          "definition": "Radio resource (PRB) utilization percentage.",
+          "threshold": "Warning ≥ 70% · Critical ≥ 92%"
+        },
+        {
+          "name": "dropped-call",
+          "definition": "Dropped-call rate percentage.",
+          "threshold": "Warning ≥ 2% · Critical ≥ 5%"
+        }
+      ],
+      "synthetic": true
+    },
+    {
+      "document_id": "RB-SYNC-FAILURE",
+      "title": "Timing synchronization failure checks",
+      "source_ref": "data/runbooks/runbook_catalog.json#RB-SYNC-FAILURE",
+      "technology": ["4G", "5G", "4G+5G"],
+      "alarm_types": ["SYNC_FAILURE"],
+      "kpis": ["latency"],
+      "related_incident_ids": [],
+      "related_scenario_ids": [],
+      "related_postmortems": [],
+      "body": "SYNC_FAILURE indicates a timing or synchronization condition at the site. The synthetic dataset does not attach this alarm class to a ground-truth incident. Collect the alarm ID, site, and any concurrent KPI samples. Do not invent a postmortem or vendor bulletin that is not in the knowledge index.",
+      "steps": [
+        "Capture the SYNC_FAILURE alarm ID, site ID, and timestamp.",
+        "Check whether other transport or congestion alarms are correlated on the same site.",
+        "Review latency against the shared threshold table if telemetry is available.",
+        "If no related incident or postmortem is indexed, leave those fields empty rather than guessing."
+      ],
+      "kpi_definitions": [
+        {
+          "name": "latency",
+          "definition": "Round-trip service latency reported by site telemetry.",
+          "threshold": "Warning ≥ 80 ms · Critical ≥ 150 ms · Unavailable ≥ 900 ms"
+        }
+      ],
+      "synthetic": true
+    }
+  ]
+}

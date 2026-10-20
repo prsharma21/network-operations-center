@@ -111,7 +111,7 @@ export function DashboardPage() {
           {hasNoData ? (
             <EmptyState
               title="No data for this time range"
-              description="The synthetic dataset has no alarms, incidents, or telemetry in the selected window. Try Last 7 Days."
+              description="No alarms, incidents, or telemetry are available in the selected window. Try Last 7 Days."
             />
           ) : (
             <>

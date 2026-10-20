@@ -33,7 +33,7 @@ export function NotificationMenu({ open, onOpenChange }: NotificationMenuProps) 
           <EmptyState
             compact
             title="No notifications"
-            description="Alarm and approval alerts will appear here. This inbox is empty in the demo shell."
+            description="Alarm and approval alerts will appear here when a notification service is connected."
           />
         </div>
       ) : null}

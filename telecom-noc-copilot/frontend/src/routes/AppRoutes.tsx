@@ -33,6 +33,18 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardPage />, handle: handleFor('/') },
       { path: 'alarms', element: <AlarmsPage />, handle: handleFor('/alarms') },
       { path: 'sites', element: <SitesPage />, handle: handleFor('/sites') },
+      {
+        path: 'sites/:siteId',
+        element: <SitesPage />,
+        handle: {
+          title: 'Site health',
+          breadcrumbs: [
+            { label: 'Network operations', to: '/' },
+            { label: 'Sites', to: '/sites' },
+            { label: 'Site health' },
+          ],
+        },
+      },
       { path: 'incidents', element: <IncidentsPage />, handle: handleFor('/incidents') },
       {
         path: 'incidents/:incidentId',

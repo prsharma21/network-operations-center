@@ -7,6 +7,7 @@ import { StatusBadge } from '@/components/common/StatusBadge'
 import { NotificationMenu } from '@/components/layout/NotificationMenu'
 import { ProfileMenu } from '@/components/layout/ProfileMenu'
 import type { Breadcrumb } from '@/types/ui'
+import { canUseDemoFallback } from '@/utils/config'
 
 interface HeaderProps {
   title: string
@@ -36,6 +37,12 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
 
   const onSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    const trimmed = query.trim()
+    if (!trimmed) {
+      setNotice('Enter an alarm, site, or incident term to search.')
+      return
+    }
+    setNotice('Global search is not connected. Use Alarms, Sites, or Incidents filters instead.')
   }
 
   return (
@@ -89,7 +96,7 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
         </form>
 
         <div className="header__tools">
-          <StatusBadge status="demo" />
+          {canUseDemoFallback() ? <StatusBadge status="demo" /> : null}
           <NotificationMenu open={openMenu === 'notifications'} onOpenChange={(next) => setOpenMenu(next ? 'notifications' : null)} />
           <ProfileMenu
             open={openMenu === 'profile'}

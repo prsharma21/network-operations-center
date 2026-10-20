@@ -8,15 +8,21 @@ import { formatDateTime } from '@/utils/format'
 
 interface RecentIncidentsTableProps {
   incidents: RecentIncident[]
+  title?: string
+  emptyDescription?: string
 }
 
-export function RecentIncidentsTable({ incidents }: RecentIncidentsTableProps) {
+export function RecentIncidentsTable({
+  incidents,
+  title = 'Recent incidents',
+  emptyDescription = 'No incidents were updated in this time range.',
+}: RecentIncidentsTableProps) {
   const navigate = useNavigate()
 
   return (
-    <Card title="Recent incidents" className="card--table">
+    <Card title={title} className="card--table">
       {incidents.length === 0 ? (
-        <EmptyState compact title="No incidents" description="No incidents were updated in this time range." />
+        <EmptyState compact title="No incidents" description={emptyDescription} />
       ) : (
         <div className="table-wrap">
           <table className="data-table">
