@@ -1,0 +1,547 @@
+{
+  "inventory_id": "OSS-INVENTORY-001",
+  "generated_at": "2026-10-19T00:00:00+00:00",
+  "source": "synthetic-oss",
+  "equipment": [
+    {
+      "equipment_id": "EQ-001",
+      "site_id": "SITE-001",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R21.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-001",
+      "site_id": "SITE-001",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R21.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-001",
+      "site_id": "SITE-001",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R21.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-002",
+      "site_id": "SITE-002",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R22.2",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-002",
+      "site_id": "SITE-002",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R22.2",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-002",
+      "site_id": "SITE-002",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R22.2",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-003",
+      "site_id": "SITE-003",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R23.3",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-003",
+      "site_id": "SITE-003",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R23.3",
+      "operational_state": "fault",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-003",
+      "site_id": "SITE-003",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R23.3",
+      "operational_state": "fault",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-004",
+      "site_id": "SITE-004",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R20.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-004",
+      "site_id": "SITE-004",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R20.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-004",
+      "site_id": "SITE-004",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R20.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-005",
+      "site_id": "SITE-005",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R21.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-005",
+      "site_id": "SITE-005",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R21.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-005",
+      "site_id": "SITE-005",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R21.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-006",
+      "site_id": "SITE-006",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R22.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-006",
+      "site_id": "SITE-006",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R22.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-006",
+      "site_id": "SITE-006",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R22.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-007",
+      "site_id": "SITE-007",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R23.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-007",
+      "site_id": "SITE-007",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R23.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-007",
+      "site_id": "SITE-007",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R23.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-008",
+      "site_id": "SITE-008",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R20.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-008",
+      "site_id": "SITE-008",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R20.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-008",
+      "site_id": "SITE-008",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R20.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-009",
+      "site_id": "SITE-009",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R21.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-009",
+      "site_id": "SITE-009",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R21.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-009",
+      "site_id": "SITE-009",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R21.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-010",
+      "site_id": "SITE-010",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R22.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-010",
+      "site_id": "SITE-010",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R22.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-010",
+      "site_id": "SITE-010",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R22.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-011",
+      "site_id": "SITE-011",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R23.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-011",
+      "site_id": "SITE-011",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R23.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-011",
+      "site_id": "SITE-011",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R23.1",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-012",
+      "site_id": "SITE-012",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R20.2",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-012",
+      "site_id": "SITE-012",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R20.2",
+      "operational_state": "fault",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-012",
+      "site_id": "SITE-012",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R20.2",
+      "operational_state": "fault",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-013",
+      "site_id": "SITE-013",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R21.3",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-013",
+      "site_id": "SITE-013",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R21.3",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-013",
+      "site_id": "SITE-013",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R21.3",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-014",
+      "site_id": "SITE-014",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R22.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-014",
+      "site_id": "SITE-014",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R22.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-014",
+      "site_id": "SITE-014",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R22.4",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-015",
+      "site_id": "SITE-015",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R23.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-015",
+      "site_id": "SITE-015",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R23.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-015",
+      "site_id": "SITE-015",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R23.5",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-016",
+      "site_id": "SITE-016",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R20.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-016",
+      "site_id": "SITE-016",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R20.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-016",
+      "site_id": "SITE-016",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R20.6",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-017",
+      "site_id": "SITE-017",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R21.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-017",
+      "site_id": "SITE-017",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R21.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-017",
+      "site_id": "SITE-017",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R21.7",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-018",
+      "site_id": "SITE-018",
+      "component": "radio_unit",
+      "vendor": "Nokia",
+      "software_version": "R22.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-018",
+      "site_id": "SITE-018",
+      "component": "baseband_unit",
+      "vendor": "Nokia",
+      "software_version": "R22.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-018",
+      "site_id": "SITE-018",
+      "component": "backhaul_router",
+      "vendor": "Nokia",
+      "software_version": "R22.8",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-019",
+      "site_id": "SITE-019",
+      "component": "radio_unit",
+      "vendor": "Ericsson",
+      "software_version": "R23.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-019",
+      "site_id": "SITE-019",
+      "component": "baseband_unit",
+      "vendor": "Ericsson",
+      "software_version": "R23.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-019",
+      "site_id": "SITE-019",
+      "component": "backhaul_router",
+      "vendor": "Ericsson",
+      "software_version": "R23.9",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-020",
+      "site_id": "SITE-020",
+      "component": "radio_unit",
+      "vendor": "Samsung",
+      "software_version": "R20.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-020",
+      "site_id": "SITE-020",
+      "component": "baseband_unit",
+      "vendor": "Samsung",
+      "software_version": "R20.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    },
+    {
+      "equipment_id": "EQ-020",
+      "site_id": "SITE-020",
+      "component": "backhaul_router",
+      "vendor": "Samsung",
+      "software_version": "R20.0",
+      "operational_state": "in_service",
+      "synthetic": true
+    }
+  ]
+}

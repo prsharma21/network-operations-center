@@ -1,0 +1,28 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "SCN-OUTAGE-01",
+      "name": "site_outage",
+      "site_id": "SITE-003",
+      "description": "Backhaul failure causes site unreachable and service-impact alarms.",
+      "expected_root_cause": "Simulated backhaul link failure",
+      "expected_site_status": "down"
+    },
+    {
+      "scenario_id": "SCN-CONGESTION-01",
+      "name": "congestion",
+      "site_id": "SITE-007",
+      "description": "Busy-hour traffic drives utilization and latency high, throughput falls and dropped calls rise.",
+      "expected_root_cause": "Simulated radio capacity congestion",
+      "expected_site_status": "degraded"
+    },
+    {
+      "scenario_id": "SCN-DEPLOY-01",
+      "name": "deployment_related_fault",
+      "site_id": "SITE-012",
+      "description": "A planned software/configuration rollout is followed by KPI degradation and accessibility alarms.",
+      "expected_root_cause": "Simulated configuration regression after deployment",
+      "expected_site_status": "degraded"
+    }
+  ]
+}

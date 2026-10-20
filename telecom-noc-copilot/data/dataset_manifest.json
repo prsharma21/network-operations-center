@@ -1,0 +1,23 @@
+{
+  "dataset_name": "Agentic AI Telecom NOC Copilot Synthetic Dataset",
+  "dataset_version": "1.0.0",
+  "generated_at": "2026-10-20T00:00:00+00:00",
+  "seed": 20261020,
+  "synthetic_only": true,
+  "disclaimer": "All records are fabricated for software development and testing. No live network or customer data is included. No production action is authorized.",
+  "counts": {
+    "sites": 20,
+    "alarms": 100,
+    "telemetry_samples": 240,
+    "oss_equipment_records": 60,
+    "topology_links": 25,
+    "deployment_events": 6,
+    "tickets": 15,
+    "known_scenarios": 3
+  },
+  "scenario_ids": [
+    "SCN-OUTAGE-01",
+    "SCN-CONGESTION-01",
+    "SCN-DEPLOY-01"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-OUTAGE-001",
+      "scenario_id": "SCN-OUTAGE-01",
+      "site_id": "SITE-003",
+      "expected_cause": "Simulated backhaul link failure",
+      "evidence_alarm_ids": [
+        "ALM-0001",
+        "ALM-0002",
+        "ALM-0003"
+      ],
+      "expected_signals": [
+        "site unreachable",
+        "backhaul link down",
+        "throughput zero",
+        "latency unavailable/high",
+        "dropped-call rate severe"
+      ]
+    },
+    {
+      "incident_id": "INC-CONGESTION-001",
+      "scenario_id": "SCN-CONGESTION-01",
+      "site_id": "SITE-007",
+      "expected_cause": "Simulated radio capacity congestion",
+      "evidence_alarm_ids": [
+        "ALM-0004",
+        "ALM-0005",
+        "ALM-0006",
+        "ALM-0007"
+      ],
+      "expected_signals": [
+        "utilization above 92%",
+        "latency elevated",
+        "throughput degraded",
+        "dropped-call rate elevated"
+      ]
+    },
+    {
+      "incident_id": "INC-DEPLOY-001",
+      "scenario_id": "SCN-DEPLOY-01",
+      "site_id": "SITE-012",
+      "expected_cause": "Simulated configuration regression after deployment",
+      "evidence_alarm_ids": [
+        "ALM-0008",
+        "ALM-0009",
+        "ALM-0010"
+      ],
+      "deployment_id": "DEP-001",
+      "expected_signals": [
+        "deployment completed with warning",
+        "configuration mismatch",
+        "post-deployment KPI degradation"
+      ]
+    }
+  ],
+  "note": "Ground truth is intended for deterministic testing/evaluation. The expected cause is a known synthetic label, not a live-network diagnosis."
+}

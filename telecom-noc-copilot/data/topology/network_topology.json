@@ -1,0 +1,233 @@
+{
+  "topology_id": "TOPOLOGY-001",
+  "generated_at": "2026-10-19T00:00:00+00:00",
+  "source": "synthetic-oss",
+  "links": [
+    {
+      "link_id": "LINK-001",
+      "source_id": "SITE-001",
+      "target_id": "AGG-01",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-002",
+      "source_id": "SITE-002",
+      "target_id": "AGG-02",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-003",
+      "source_id": "SITE-003",
+      "target_id": "AGG-03",
+      "link_type": "microwave",
+      "status": "down",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-004",
+      "source_id": "SITE-004",
+      "target_id": "AGG-04",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-005",
+      "source_id": "SITE-005",
+      "target_id": "AGG-05",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-006",
+      "source_id": "SITE-006",
+      "target_id": "AGG-01",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-007",
+      "source_id": "SITE-007",
+      "target_id": "AGG-02",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-008",
+      "source_id": "SITE-008",
+      "target_id": "AGG-03",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-009",
+      "source_id": "SITE-009",
+      "target_id": "AGG-04",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-010",
+      "source_id": "SITE-010",
+      "target_id": "AGG-05",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-011",
+      "source_id": "SITE-011",
+      "target_id": "AGG-01",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-012",
+      "source_id": "SITE-012",
+      "target_id": "AGG-02",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-013",
+      "source_id": "SITE-013",
+      "target_id": "AGG-03",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-014",
+      "source_id": "SITE-014",
+      "target_id": "AGG-04",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-015",
+      "source_id": "SITE-015",
+      "target_id": "AGG-05",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-016",
+      "source_id": "SITE-016",
+      "target_id": "AGG-01",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-017",
+      "source_id": "SITE-017",
+      "target_id": "AGG-02",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-018",
+      "source_id": "SITE-018",
+      "target_id": "AGG-03",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-019",
+      "source_id": "SITE-019",
+      "target_id": "AGG-04",
+      "link_type": "microwave",
+      "status": "up",
+      "capacity_mbps": 300,
+      "synthetic": true
+    },
+    {
+      "link_id": "LINK-020",
+      "source_id": "SITE-020",
+      "target_id": "AGG-05",
+      "link_type": "fiber",
+      "status": "up",
+      "capacity_mbps": 1000,
+      "synthetic": true
+    },
+    {
+      "link_id": "CORE-01",
+      "source_id": "AGG-01",
+      "target_id": "CORE-01",
+      "link_type": "core_uplink",
+      "status": "up",
+      "capacity_mbps": 10000,
+      "synthetic": true
+    },
+    {
+      "link_id": "CORE-02",
+      "source_id": "AGG-02",
+      "target_id": "CORE-01",
+      "link_type": "core_uplink",
+      "status": "up",
+      "capacity_mbps": 10000,
+      "synthetic": true
+    },
+    {
+      "link_id": "CORE-03",
+      "source_id": "AGG-03",
+      "target_id": "CORE-01",
+      "link_type": "core_uplink",
+      "status": "up",
+      "capacity_mbps": 10000,
+      "synthetic": true
+    },
+    {
+      "link_id": "CORE-04",
+      "source_id": "AGG-04",
+      "target_id": "CORE-01",
+      "link_type": "core_uplink",
+      "status": "up",
+      "capacity_mbps": 10000,
+      "synthetic": true
+    },
+    {
+      "link_id": "CORE-05",
+      "source_id": "AGG-05",
+      "target_id": "CORE-01",
+      "link_type": "core_uplink",
+      "status": "up",
+      "capacity_mbps": 10000,
+      "synthetic": true
+    }
+  ],
+  "synthetic": true
+}

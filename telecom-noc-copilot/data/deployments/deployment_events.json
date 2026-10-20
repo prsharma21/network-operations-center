@@ -1,0 +1,76 @@
+{
+  "deployment_events": [
+    {
+      "deployment_id": "DEP-001",
+      "site_id": "SITE-012",
+      "timestamp": "2026-10-19T04:00:00+00:00",
+      "change_type": "software",
+      "version_before": "R20.4",
+      "version_after": "R21.1",
+      "status": "completed_with_warning",
+      "change_ticket": "CHG-0001",
+      "notes": "Synthetic configuration rollout; KPI degradation observed shortly after deployment.",
+      "synthetic": true
+    },
+    {
+      "deployment_id": "DEP-002",
+      "site_id": "SITE-005",
+      "timestamp": "2026-10-19T08:00:00+00:00",
+      "change_type": "configuration",
+      "version_before": "R20.4",
+      "version_after": "R20.6",
+      "status": "completed",
+      "change_ticket": "CHG-0002",
+      "notes": "Synthetic routine deployment completed.",
+      "synthetic": true
+    },
+    {
+      "deployment_id": "DEP-003",
+      "site_id": "SITE-018",
+      "timestamp": "2026-10-19T12:00:00+00:00",
+      "change_type": "software",
+      "version_before": "R20.4",
+      "version_after": "R20.7",
+      "status": "completed",
+      "change_ticket": "CHG-0003",
+      "notes": "Synthetic routine deployment completed.",
+      "synthetic": true
+    },
+    {
+      "deployment_id": "DEP-004",
+      "site_id": "SITE-009",
+      "timestamp": "2026-10-19T16:00:00+00:00",
+      "change_type": "configuration",
+      "version_before": "R20.4",
+      "version_after": "R20.8",
+      "status": "completed",
+      "change_ticket": "CHG-0004",
+      "notes": "Synthetic routine deployment completed.",
+      "synthetic": true
+    },
+    {
+      "deployment_id": "DEP-005",
+      "site_id": "SITE-014",
+      "timestamp": "2026-10-19T20:00:00+00:00",
+      "change_type": "software",
+      "version_before": "R20.4",
+      "version_after": "R20.9",
+      "status": "completed",
+      "change_ticket": "CHG-0005",
+      "notes": "Synthetic routine deployment completed.",
+      "synthetic": true
+    },
+    {
+      "deployment_id": "DEP-006",
+      "site_id": "SITE-002",
+      "timestamp": "2026-10-20T00:00:00+00:00",
+      "change_type": "configuration",
+      "version_before": "R20.4",
+      "version_after": "R20.10",
+      "status": "completed",
+      "change_ticket": "CHG-0006",
+      "notes": "Synthetic routine deployment completed.",
+      "synthetic": true
+    }
+  ]
+}
