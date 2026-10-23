@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     cors_origins: str = Field(default="http://localhost:5173")
 
     @property
+    def data_dir(self) -> Path:
+        return _PROJECT_ROOT / "data"
+
+    @property
     def cors_origin_list(self) -> list[str]:
         origins = [item.strip() for item in self.cors_origins.split(",") if item.strip()]
         if not origins:

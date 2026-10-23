@@ -47,3 +47,10 @@ def parse_utc_datetime(value: Any) -> datetime:
 
 
 UtcDateTime = Annotated[datetime, BeforeValidator(parse_utc_datetime)]
+
+
+def parse_optional_utc_datetime(value: str | None) -> datetime | None:
+    """Parse an optional ISO 8601 query timestamp, or return None when blank."""
+    if value is None or not value.strip():
+        return None
+    return parse_utc_datetime(value)

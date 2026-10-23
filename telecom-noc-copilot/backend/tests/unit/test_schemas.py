@@ -10,8 +10,10 @@ from app.schemas import (
     Incident,
     IncidentCreate,
     NetworkAlarm,
+    NetworkAlarmCreate,
     NetworkSite,
     TelemetryMetric,
+    TelemetryMetricCreate,
     Ticket,
 )
 from app.schemas.enums import IncidentLifecycleStatus, Severity
@@ -153,6 +155,21 @@ def test_blank_strings_are_rejected() -> None:
         NetworkAlarm.model_validate(valid_alarm(message=""))
 
 
+def test_alarm_create_allows_omitted_id() -> None:
+    created = NetworkAlarmCreate.model_validate(
+        {
+            "site_id": "SITE-001",
+            "alarm_code": "HIGH_LATENCY",
+            "severity": "major",
+            "status": "active",
+            "timestamp": "2026-10-21T12:00:00+00:00",
+            "message": "Latency above threshold",
+        }
+    )
+    assert created.alarm_id is None
+    assert created.site_id == "SITE-001"
+
+
 def test_invalid_severity_and_status_are_rejected() -> None:
     with pytest.raises(ValidationError):
         NetworkAlarm.model_validate(valid_alarm(severity="catastrophic"))
@@ -204,6 +221,21 @@ def test_aliases_accept_task_field_names() -> None:
         }
     )
     assert metric.dropped_call_rate_pct == 1.5
+
+
+def test_telemetry_create_allows_omitted_id_and_alias() -> None:
+    created = TelemetryMetricCreate.model_validate(
+        {
+            "site_id": "SITE-001",
+            "timestamp": "2026-10-21T12:00:00+00:00",
+            "latency_ms": 18.5,
+            "throughput_mbps": 150.0,
+            "utilization_pct": 32.0,
+            "dropped_call_rate": 0.4,
+        }
+    )
+    assert created.metric_id is None
+    assert created.dropped_call_rate_pct == 0.4
 
 
 def test_invalid_kpi_ranges_are_rejected() -> None:

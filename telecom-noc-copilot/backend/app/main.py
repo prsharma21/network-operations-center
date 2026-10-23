@@ -1,7 +1,7 @@
 """FastAPI application entry point for the Telecom NOC Copilot.
 
-Day 3 scope: Pydantic request/response validation, configuration, CORS, and
-liveness. PostgreSQL, Bedrock, and CRUD collection APIs are not implemented here.
+Day 3 plus Phase 1–4 mock OSS: sites, alarms, telemetry, deployments, and tickets.
+PostgreSQL and Bedrock are not implemented here.
 """
 
 from __future__ import annotations
@@ -13,7 +13,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.endpoints.alarms import router as alarms_router
+from app.api.v1.endpoints.deployments import router as deployments_router
 from app.api.v1.endpoints.health import router as health_router
+from app.api.v1.endpoints.sites import router as sites_router
+from app.api.v1.endpoints.telemetry import router as telemetry_router
+from app.api.v1.endpoints.tickets import router as tickets_router
 from app.api.v1.router import api_router
 from app.utils.logging import configure_logging
 from app.utils.settings import get_settings
@@ -43,8 +48,8 @@ def create_app() -> FastAPI:
         version=settings.app_version,
         description=(
             "Agentic AI Telecom Network Operations Center Copilot API. "
-            "Day 3 exposes request/response validation and a health check. "
-            "No live network actions are performed."
+            "Mock OSS exposes site lookup, alarms, telemetry, GET /deployments, "
+            "and GET /tickets from synthetic JSON. No live network actions are performed."
         ),
         lifespan=lifespan,
     )
@@ -56,6 +61,11 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     application.include_router(health_router)
+    application.include_router(sites_router)
+    application.include_router(alarms_router)
+    application.include_router(telemetry_router)
+    application.include_router(deployments_router)
+    application.include_router(tickets_router)
     application.include_router(api_router)
     return application
 

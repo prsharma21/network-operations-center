@@ -37,3 +37,36 @@ class NetworkAlarm(BaseModel):
     @property
     def alarm_type(self) -> str:
         return self.alarm_code
+
+
+class NetworkAlarmCreate(BaseModel):
+    """POST /alarms body. ``alarm_id`` is optional; the mock OSS assigns the next ID."""
+
+    model_config = MODEL_CONFIG
+
+    alarm_id: NonEmptyStr | None = None
+    site_id: SiteId
+    alarm_code: NonEmptyStr = Field(
+        validation_alias=AliasChoices("alarm_code", "alarm_type"),
+    )
+    severity: Severity
+    status: AlarmStatus
+    timestamp: UtcDateTime
+    message: NonEmptyStr = Field(validation_alias=AliasChoices("message", "description"))
+    region: NonEmptyStr | None = None
+    source: NonEmptyStr | None = None
+    scenario_id: NonEmptyStr | None = None
+    correlation_key: NonEmptyStr | None = None
+    synthetic: bool = True
+
+
+class AlarmListResponse(BaseModel):
+    """Paginated GET /alarms payload compatible with the frontend list contract."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[NetworkAlarm]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime

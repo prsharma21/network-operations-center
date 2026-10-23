@@ -30,3 +30,15 @@ class Ticket(BaseModel):
     incident_id: NonEmptyStr | None = None
     scenario_id: NonEmptyStr | None = None
     synthetic: bool = True
+
+
+class TicketListResponse(BaseModel):
+    """Paginated GET /tickets payload."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[Ticket]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime

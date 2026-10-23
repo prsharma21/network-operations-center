@@ -27,3 +27,15 @@ class DeploymentEvent(BaseModel):
     notes: NonEmptyStr = Field(validation_alias=AliasChoices("notes", "change_summary"))
     change_ticket: NonEmptyStr | None = None
     synthetic: bool = True
+
+
+class DeploymentListResponse(BaseModel):
+    """Paginated GET /deployments payload."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[DeploymentEvent]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime

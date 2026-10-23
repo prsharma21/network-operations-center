@@ -8,11 +8,42 @@ from app.schemas.common import MODEL_CONFIG, NonEmptyStr, SiteId, UtcDateTime
 from app.schemas.enums import SiteStatus
 
 
+class SiteEquipment(BaseModel):
+    """OSS equipment row from ``data/oss/oss_inventory.json``."""
+
+    model_config = MODEL_CONFIG
+
+    equipment_id: NonEmptyStr
+    site_id: SiteId
+    component: NonEmptyStr
+    vendor: NonEmptyStr
+    software_version: NonEmptyStr
+    operational_state: NonEmptyStr
+    synthetic: bool = True
+
+
+class TopologyReference(BaseModel):
+    """Backhaul / aggregation link from ``data/topology/network_topology.json``."""
+
+    model_config = MODEL_CONFIG
+
+    link_id: NonEmptyStr
+    source_id: NonEmptyStr
+    target_id: NonEmptyStr
+    link_type: NonEmptyStr
+    status: NonEmptyStr
+    capacity_mbps: float = Field(ge=0)
+    synthetic: bool = True
+
+
 class NetworkSite(BaseModel):
-    """Cell site inventory record from the synthetic OSS dataset.
+    """Cell site configuration from the synthetic OSS dataset.
 
     ``created_at`` is optional because the current JSON fixtures do not include
     timestamps. When present it must be timezone-aware ISO 8601.
+
+    ``equipment`` and ``topology`` default to empty lists so site-only fixture
+    records still validate. ``GET /sites/{site_id}`` fills them from OSS JSON.
     """
 
     model_config = MODEL_CONFIG
@@ -31,3 +62,5 @@ class NetworkSite(BaseModel):
     known_scenario: NonEmptyStr | None = None
     synthetic: bool = True
     created_at: UtcDateTime | None = None
+    equipment: list[SiteEquipment] = Field(default_factory=list)
+    topology: list[TopologyReference] = Field(default_factory=list)

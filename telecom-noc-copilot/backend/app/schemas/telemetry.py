@@ -37,3 +37,36 @@ class TelemetryMetric(BaseModel):
     sample_window_minutes: int = Field(default=5, gt=0)
     state: TelemetryState = TelemetryState.NORMAL
     synthetic: bool = True
+
+
+class TelemetryMetricCreate(BaseModel):
+    """POST /telemetry body. ``metric_id`` is optional; the mock OSS assigns it."""
+
+    model_config = MODEL_CONFIG
+
+    metric_id: NonEmptyStr | None = None
+    site_id: SiteId
+    timestamp: UtcDateTime
+    latency_ms: float = Field(ge=0)
+    throughput_mbps: float = Field(ge=0)
+    utilization_pct: float = Field(ge=0, le=100)
+    dropped_call_rate_pct: float = Field(
+        ge=0,
+        le=100,
+        validation_alias=AliasChoices("dropped_call_rate_pct", "dropped_call_rate"),
+    )
+    sample_window_minutes: int = Field(default=5, gt=0)
+    state: TelemetryState = TelemetryState.NORMAL
+    synthetic: bool = True
+
+
+class TelemetryListResponse(BaseModel):
+    """Paginated GET /sites/{site_id}/metrics payload."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[TelemetryMetric]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime
