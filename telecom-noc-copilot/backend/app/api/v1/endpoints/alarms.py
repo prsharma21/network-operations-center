@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 
 from app.api.deps import get_alarm_service
 from app.schemas.alarm import AlarmListResponse, NetworkAlarm, NetworkAlarmCreate
@@ -18,6 +18,7 @@ router = APIRouter(tags=["alarms"])
 @router.post(
     "/alarms",
     response_model=NetworkAlarm,
+    response_model_exclude_none=True,
     status_code=status.HTTP_201_CREATED,
     responses={
         404: {"description": "Referenced site_id is not in the synthetic OSS inventory"},
@@ -27,11 +28,13 @@ router = APIRouter(tags=["alarms"])
 )
 def create_alarm(
     payload: NetworkAlarmCreate,
+    request: Request,
     response: Response,
     service: Annotated[OssAlarmService, Depends(get_alarm_service)],
 ) -> NetworkAlarm:
+    request_id = getattr(request.state, "request_id", None)
     try:
-        created = service.create_alarm(payload)
+        created = service.create_alarm(payload, request_id=request_id)
     except SiteNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     except DuplicateAlarm as exc:
@@ -43,6 +46,7 @@ def create_alarm(
 @router.get(
     "/alarms",
     response_model=AlarmListResponse,
+    response_model_exclude_none=True,
     responses={422: {"description": "Invalid filter or pagination values"}},
 )
 def list_alarms(

@@ -19,6 +19,15 @@ class BrokenRepository:
         return []
 
 
+def test_list_sites_returns_catalog(client: TestClient) -> None:
+    response = client.get("/sites")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total"] == 20
+    ids = {item["site_id"] for item in body["items"]}
+    assert "SITE-003" in ids
+
+
 def test_existing_site_returns_200(client: TestClient) -> None:
     response = client.get("/sites/SITE-003")
     assert response.status_code == 200
@@ -49,7 +58,6 @@ def test_unknown_site_returns_404(client: TestClient) -> None:
 
 
 def test_invalid_stored_site_returns_500(client: TestClient) -> None:
-    get_oss_service.cache_clear()
     app.dependency_overrides[get_oss_service] = lambda: OssSiteService(BrokenRepository())
     try:
         response = client.get("/sites/SITE-003")
@@ -57,7 +65,6 @@ def test_invalid_stored_site_returns_500(client: TestClient) -> None:
         assert "SITE-003" in response.json()["detail"]
     finally:
         app.dependency_overrides.clear()
-        get_oss_service.cache_clear()
 
 
 def test_health_still_works(client: TestClient) -> None:

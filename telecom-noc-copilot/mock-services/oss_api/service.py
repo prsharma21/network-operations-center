@@ -13,6 +13,27 @@ class OssSiteService:
     def __init__(self, repository: SiteRepository) -> None:
         self._repository = repository
 
+    def list_sites(self) -> list[NetworkSite]:
+        list_records = getattr(self._repository, "list_site_records", None)
+        if not callable(list_records):
+            return []
+        parsed: list[NetworkSite] = []
+        for row in list_records():
+            site_id = str(row.get("site_id") or "").strip()
+            if not site_id:
+                continue
+            payload = {
+                **row,
+                "equipment": self._repository.list_equipment(site_id),
+                "topology": self._repository.list_topology(site_id),
+            }
+            try:
+                parsed.append(NetworkSite.model_validate(payload))
+            except ValidationError:
+                continue
+        parsed.sort(key=lambda item: item.site_id)
+        return parsed
+
     def get_site(self, site_id: str) -> NetworkSite:
         requested = site_id.strip()
         if not requested:

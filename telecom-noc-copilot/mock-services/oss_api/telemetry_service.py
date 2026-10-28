@@ -12,11 +12,11 @@ from app.schemas.telemetry import (
     TelemetryMetricCreate,
 )
 from oss_api.exceptions import InvalidTimeRange, SiteNotFound
-from oss_api.repository import JsonOssRepository
+from oss_api.repository import OssDataRepository
 
 
 class OssTelemetryService:
-    def __init__(self, repository: JsonOssRepository) -> None:
+    def __init__(self, repository: OssDataRepository) -> None:
         self._repository = repository
 
     def create_metric(self, payload: TelemetryMetricCreate) -> TelemetryMetric:

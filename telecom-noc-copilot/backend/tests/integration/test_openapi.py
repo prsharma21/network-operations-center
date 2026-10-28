@@ -50,6 +50,12 @@ def test_openapi_includes_health_and_entity_schemas(client: TestClient) -> None:
     assert "/tickets" in paths
     assert "get" in paths["/tickets"]
     assert "post" not in paths["/tickets"]
+    assert "/sites" in paths
+    assert "get" in paths["/sites"]
+    assert "/incidents" in paths
+    assert "get" in paths["/incidents"]
+    assert "/incidents/{incident_id}" in paths
+    assert "/health/ready" in paths
     ticket_params = {item["name"] for item in paths["/tickets"]["get"]["parameters"]}
     assert ticket_params >= {"incident_id", "status", "priority", "owner", "page", "page_size"}
     assert "/api/v1/validate/sites" in paths
@@ -71,6 +77,8 @@ def test_openapi_includes_health_and_entity_schemas(client: TestClient) -> None:
         "DeploymentEvent",
         "DeploymentListResponse",
         "Incident",
+        "IncidentListResponse",
+        "SiteListResponse",
         "Ticket",
         "TicketListResponse",
         "HealthResponse",

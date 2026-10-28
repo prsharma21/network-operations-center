@@ -64,3 +64,15 @@ class NetworkSite(BaseModel):
     created_at: UtcDateTime | None = None
     equipment: list[SiteEquipment] = Field(default_factory=list)
     topology: list[TopologyReference] = Field(default_factory=list)
+
+
+class SiteListResponse(BaseModel):
+    """Paginated GET /sites payload compatible with the frontend catalog."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[NetworkSite]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime

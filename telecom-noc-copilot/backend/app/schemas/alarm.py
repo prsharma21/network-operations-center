@@ -33,6 +33,26 @@ class NetworkAlarm(BaseModel):
     scenario_id: NonEmptyStr | None = None
     correlation_key: NonEmptyStr | None = None
     synthetic: bool = True
+    source_event_id: NonEmptyStr | None = None
+    site_name: NonEmptyStr | None = None
+    technology: NonEmptyStr | None = None
+    vendor: NonEmptyStr | None = None
+    network_component: NonEmptyStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("network_component", "component"),
+    )
+    source_severity: Severity | None = None
+    computed_severity: Severity | None = None
+    severity_rule: NonEmptyStr | None = None
+    latency_ms: float | None = Field(default=None, ge=0)
+    throughput_mbps: float | None = Field(default=None, ge=0)
+    utilization_pct: float | None = Field(default=None, ge=0, le=100)
+    dropped_call_rate_pct: float | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        validation_alias=AliasChoices("dropped_call_rate_pct", "dropped_call_rate"),
+    )
 
     @property
     def alarm_type(self) -> str:
@@ -45,6 +65,7 @@ class NetworkAlarmCreate(BaseModel):
     model_config = MODEL_CONFIG
 
     alarm_id: NonEmptyStr | None = None
+    source_event_id: NonEmptyStr | None = None
     site_id: SiteId
     alarm_code: NonEmptyStr = Field(
         validation_alias=AliasChoices("alarm_code", "alarm_type"),
@@ -58,6 +79,22 @@ class NetworkAlarmCreate(BaseModel):
     scenario_id: NonEmptyStr | None = None
     correlation_key: NonEmptyStr | None = None
     synthetic: bool = True
+    site_name: NonEmptyStr | None = None
+    technology: NonEmptyStr | None = None
+    vendor: NonEmptyStr | None = None
+    network_component: NonEmptyStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("network_component", "component"),
+    )
+    latency_ms: float | None = Field(default=None, ge=0)
+    throughput_mbps: float | None = Field(default=None, ge=0)
+    utilization_pct: float | None = Field(default=None, ge=0, le=100)
+    dropped_call_rate_pct: float | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        validation_alias=AliasChoices("dropped_call_rate_pct", "dropped_call_rate"),
+    )
 
 
 class AlarmListResponse(BaseModel):

@@ -9,11 +9,11 @@ from pydantic import ValidationError
 from app.schemas.deployment import DeploymentEvent, DeploymentListResponse
 from app.schemas.enums import DeploymentStatus
 from oss_api.exceptions import InvalidTimeRange
-from oss_api.repository import JsonOssRepository
+from oss_api.repository import OssDataRepository
 
 
 class OssDeploymentService:
-    def __init__(self, repository: JsonOssRepository) -> None:
+    def __init__(self, repository: OssDataRepository) -> None:
         self._repository = repository
 
     def list_deployments(

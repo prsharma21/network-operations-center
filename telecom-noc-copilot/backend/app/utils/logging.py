@@ -20,3 +20,13 @@ def configure_logging(level: str) -> None:
 def is_secret_name(name: str) -> bool:
     lowered = name.lower()
     return any(fragment in lowered for fragment in _SECRET_FRAGMENTS)
+
+
+def log_structured(logger: logging.Logger, event: str, **fields: object) -> None:
+    """Log ``event=... key=value`` pairs. Skips secrets and None values."""
+    parts = [f"event={event}"]
+    for key, value in fields.items():
+        if value is None or is_secret_name(key):
+            continue
+        parts.append(f"{key}={value}")
+    logger.info(" ".join(parts))

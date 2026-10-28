@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from app.db.session import reset_engine
 from app.main import app
 from app.utils.settings import get_settings
 
@@ -18,28 +19,15 @@ def data_dir() -> Path:
 
 
 @pytest.fixture
-def client() -> TestClient:
-    from app.api.deps import (
-        get_alarm_service,
-        get_deployment_service,
-        get_oss_repository,
-        get_oss_service,
-        get_telemetry_service,
-        get_ticket_service,
-    )
+def client(monkeypatch: pytest.MonkeyPatch) -> TestClient:
+    from app.api.deps import get_json_oss_repository
 
-    factories = (
-        get_oss_repository,
-        get_oss_service,
-        get_alarm_service,
-        get_telemetry_service,
-        get_deployment_service,
-        get_ticket_service,
-    )
+    monkeypatch.setenv("DATABASE_DISABLED", "true")
     get_settings.cache_clear()
-    for factory in factories:
-        factory.cache_clear()
+    get_json_oss_repository.cache_clear()
+    reset_engine()
     with TestClient(app) as test_client:
         yield test_client
-    for factory in factories:
-        factory.cache_clear()
+    get_json_oss_repository.cache_clear()
+    get_settings.cache_clear()
+    reset_engine()

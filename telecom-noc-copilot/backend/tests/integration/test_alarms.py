@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 
 from fastapi.testclient import TestClient
@@ -26,14 +27,20 @@ def _new_alarm(**overrides: object) -> dict[str, object]:
 
 
 def test_post_alarm_creates_record(client: TestClient) -> None:
-    response = client.post("/alarms", json=_new_alarm())
+    response = client.post("/alarms", json=_new_alarm(), headers={"X-Request-ID": "req-test-1"})
     assert response.status_code == 201
+    assert response.headers["x-request-id"] == "req-test-1"
     body = response.json()
     created = NetworkAlarm.model_validate(body)
     assert created.alarm_id == "ALM-0200"
     assert created.site_id == "SITE-001"
     assert created.region == "North"
+    assert created.site_name == "North-CELL-001"
+    assert created.technology == "4G"
+    assert created.vendor == "Ericsson"
     assert created.severity.value == "critical"
+    assert created.source_severity.value == "critical"
+    assert created.computed_severity.value == "critical"
     assert created.status.value == "active"
     assert response.headers["location"] == "/alarms/ALM-0200"
 
@@ -206,6 +213,123 @@ def test_get_alarms_empty_results_for_unknown_site_filter(client: TestClient) ->
 def test_get_alarms_rejects_invalid_filters(client: TestClient) -> None:
     assert client.get("/alarms", params={"severity": "catastrophic"}).status_code == 422
     assert client.get("/alarms", params={"status": "OPEN"}).status_code == 422
+
+
+def test_post_alarm_accepts_source_event_id(client: TestClient) -> None:
+    payload = _new_alarm()
+    del payload["alarm_id"]
+    payload["source_event_id"] = "EVT-9001"
+    response = client.post("/alarms", json=payload)
+    assert response.status_code == 201
+    assert response.json()["alarm_id"] == "EVT-9001"
+    assert response.json()["source_event_id"] == "EVT-9001"
+
+
+def test_post_alarm_rejects_duplicate_fingerprint(client: TestClient) -> None:
+    payload = _new_alarm(alarm_id="ALM-0300", timestamp="2026-10-22T08:00:00+00:00")
+    first = client.post("/alarms", json=payload)
+    assert first.status_code == 201
+    original_message = first.json()["message"]
+
+    second = client.post(
+        "/alarms",
+        json=_new_alarm(
+            alarm_id="ALM-0301",
+            timestamp="2026-10-22T13:30:00+05:30",
+            message="Must not create a second row",
+            severity="warning",
+            status="acknowledged",
+        ),
+    )
+    assert second.status_code == 409
+    assert "ALM-0300" in second.json()["detail"]
+
+    listed = client.get("/alarms", params={"site_id": "SITE-001", "page_size": 100})
+    matches = [
+        item
+        for item in listed.json()["items"]
+        if item["alarm_id"] in {"ALM-0300", "ALM-0301"}
+    ]
+    assert [item["alarm_id"] for item in matches] == ["ALM-0300"]
+    assert matches[0]["message"] == original_message
+
+
+def test_post_alarm_allows_distinct_events_with_similar_attributes(client: TestClient) -> None:
+    first = client.post(
+        "/alarms",
+        json=_new_alarm(alarm_id="ALM-0400", timestamp="2026-10-22T09:00:00+00:00"),
+    )
+    second = client.post(
+        "/alarms",
+        json=_new_alarm(alarm_id="ALM-0401", timestamp="2026-10-22T09:01:00+00:00"),
+    )
+    assert first.status_code == 201
+    assert second.status_code == 201
+
+
+def test_post_alarm_replaces_conflicting_site_metadata(client: TestClient) -> None:
+    response = client.post(
+        "/alarms",
+        json=_new_alarm(
+            alarm_id="ALM-0500",
+            region="West",
+            site_name="spoofed",
+            technology="2G",
+            vendor="Other",
+        ),
+    )
+    assert response.status_code == 201
+    body = response.json()
+    assert body["region"] == "North"
+    assert body["site_name"] == "North-CELL-001"
+    assert body["technology"] == "4G"
+    assert body["vendor"] == "Ericsson"
+
+
+def test_post_alarm_preserves_source_severity_when_kpi_conflicts(client: TestClient) -> None:
+    response = client.post(
+        "/alarms",
+        json=_new_alarm(
+            alarm_id="ALM-0600",
+            alarm_code="HIGH_LATENCY",
+            severity="major",
+            latency_ms=200,
+        ),
+    )
+    assert response.status_code == 201
+    body = response.json()
+    assert body["severity"] == "major"
+    assert body["source_severity"] == "major"
+    assert body["computed_severity"] == "critical"
+    assert body["severity_rule"] == "kpi_threshold"
+
+
+def test_post_alarm_unknown_type_uses_source_severity(client: TestClient) -> None:
+    response = client.post(
+        "/alarms",
+        json=_new_alarm(
+            alarm_id="ALM-0601",
+            alarm_code="NOT_A_MAPPED_CODE",
+            severity="minor",
+        ),
+    )
+    assert response.status_code == 201
+    body = response.json()
+    assert body["severity"] == "minor"
+    assert body["computed_severity"] == "minor"
+    assert body["severity_rule"] == "source_fallback"
+
+
+def test_post_alarm_logs_validation_and_success(client: TestClient, caplog) -> None:
+    caplog.set_level(logging.INFO, logger="telecom_noc_copilot.alarms")
+    client.post("/alarms", json=_new_alarm(severity="catastrophic"))
+    client.post("/alarms", json=_new_alarm(alarm_id="ALM-0700"))
+    client.post("/alarms", json=_new_alarm(alarm_id="ALM-0700"))
+    text = caplog.text
+    assert "outcome=validation_failed" in text
+    assert "error_category=validation" in text
+    assert "outcome=created" in text
+    assert "outcome=duplicate" in text
 
 
 def test_get_alarms_pagination_boundaries(client: TestClient) -> None:

@@ -10,6 +10,7 @@ def test_health_returns_ok(client: TestClient) -> None:
     assert body["status"] == "ok"
     assert body["service"]
     assert body["version"]
+    assert body["database"] == "disabled"
 
 
 def test_root_points_to_docs_and_health(client: TestClient) -> None:

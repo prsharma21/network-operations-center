@@ -64,3 +64,15 @@ class Incident(IncidentCreate):
     incident_id: NonEmptyStr
     created_at: UtcDateTime
     updated_at: UtcDateTime
+
+
+class IncidentListResponse(BaseModel):
+    """Paginated GET /incidents payload."""
+
+    model_config = MODEL_CONFIG
+
+    items: list[Incident]
+    total: int = Field(ge=0)
+    page: int = Field(ge=1)
+    page_size: int = Field(ge=1)
+    as_of: UtcDateTime

@@ -16,6 +16,7 @@ class HealthResponse(BaseModel):
     service: NonEmptyStr
     version: NonEmptyStr
     environment: NonEmptyStr
+    database: Literal["ok", "disabled", "unavailable"] = "disabled"
 
 
 class RootResponse(BaseModel):

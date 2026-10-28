@@ -1,43 +1,75 @@
-"""Shared FastAPI dependencies for mock OSS services."""
+"""Shared FastAPI dependencies for mock OSS services and database sessions."""
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from functools import lru_cache
+from typing import Annotated
 
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
+from app.db.oss_repository import SqlAlchemyOssRepository
+from app.db.session import yield_session
 from app.utils.settings import get_settings
 from oss_api.alarm_service import OssAlarmService
 from oss_api.deployment_service import OssDeploymentService
-from oss_api.repository import JsonOssRepository
+from oss_api.incident_service import OssIncidentService
+from oss_api.repository import JsonOssRepository, OssDataRepository
 from oss_api.service import OssSiteService
 from oss_api.telemetry_service import OssTelemetryService
 from oss_api.ticket_service import OssTicketService
 
 
+def get_db_session() -> Generator[Session | None, None, None]:
+    yield from yield_session()
+
+
 @lru_cache
-def get_oss_repository() -> JsonOssRepository:
+def get_json_oss_repository() -> JsonOssRepository:
     return JsonOssRepository(get_settings().data_dir)
 
 
-@lru_cache
-def get_oss_service() -> OssSiteService:
-    return OssSiteService(get_oss_repository())
+def get_oss_repository(
+    db: Annotated[Session | None, Depends(get_db_session)],
+) -> OssDataRepository:
+    json_repo = get_json_oss_repository()
+    if db is None:
+        return json_repo
+    return SqlAlchemyOssRepository(db, inventory=json_repo)
 
 
-@lru_cache
-def get_alarm_service() -> OssAlarmService:
-    return OssAlarmService(get_oss_repository())
+def get_oss_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssSiteService:
+    return OssSiteService(repo)
 
 
-@lru_cache
-def get_telemetry_service() -> OssTelemetryService:
-    return OssTelemetryService(get_oss_repository())
+def get_alarm_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssAlarmService:
+    return OssAlarmService(repo)
 
 
-@lru_cache
-def get_deployment_service() -> OssDeploymentService:
-    return OssDeploymentService(get_oss_repository())
+def get_telemetry_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssTelemetryService:
+    return OssTelemetryService(repo)
 
 
-@lru_cache
-def get_ticket_service() -> OssTicketService:
-    return OssTicketService(get_oss_repository())
+def get_deployment_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssDeploymentService:
+    return OssDeploymentService(repo)
+
+
+def get_ticket_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssTicketService:
+    return OssTicketService(repo)
+
+
+def get_incident_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssIncidentService:
+    return OssIncidentService(repo)

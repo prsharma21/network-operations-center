@@ -8,11 +8,11 @@ from pydantic import ValidationError
 
 from app.schemas.enums import TicketPriority, TicketStatus
 from app.schemas.ticket import Ticket, TicketListResponse
-from oss_api.repository import JsonOssRepository
+from oss_api.repository import OssDataRepository
 
 
 class OssTicketService:
-    def __init__(self, repository: JsonOssRepository) -> None:
+    def __init__(self, repository: OssDataRepository) -> None:
         self._repository = repository
 
     def list_tickets(
