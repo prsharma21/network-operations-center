@@ -5,7 +5,6 @@ import type { SiteTopology as SiteTopologyModel } from '@/types/site'
 
 interface SiteTopologyProps {
   topology: SiteTopologyModel
-  synthetic: boolean
 }
 
 const KIND_LABEL = {
@@ -14,18 +13,17 @@ const KIND_LABEL = {
   core: 'Core',
 } as const
 
-export function SiteTopology({ topology, synthetic }: SiteTopologyProps) {
-  const ordered = [...topology.nodes].sort((left, right) => rank(left.kind) - rank(right.kind))
+export function SiteTopology({ topology }: SiteTopologyProps) {
+  const nodes = topology?.nodes ?? []
+  const edges = topology?.edges ?? []
+  const ordered = [...nodes].sort((left, right) => rank(left.kind) - rank(right.kind))
 
   return (
     <Card title="Connected topology">
-      {topology.nodes.length === 0 ? (
+      {nodes.length === 0 ? (
         <EmptyState compact title="No topology" description="No topology links are available for this site." />
       ) : (
         <div className="topology">
-          {synthetic ? (
-            <p className="topology__notice">Synthetic topology from the demo dataset. Not a live network view.</p>
-          ) : null}
           <svg className="topology__canvas" viewBox="0 0 720 160" role="img" aria-label="Site backhaul path to aggregation and core">
             {ordered.map((node, index) => {
               const x = 80 + index * 220
@@ -39,7 +37,7 @@ export function SiteTopology({ topology, synthetic }: SiteTopologyProps) {
                       y1={70}
                       x2={x + 150}
                       y2={70}
-                      stroke={topology.edges[index]?.status === 'critical' ? '#9f2c23' : '#1c3f68'}
+                      stroke={edges[index]?.status === 'critical' ? '#9f2c23' : '#1c3f68'}
                       strokeWidth="2"
                     />
                   ) : null}
@@ -58,7 +56,7 @@ export function SiteTopology({ topology, synthetic }: SiteTopologyProps) {
             })}
           </svg>
           <ul className="topology__legend">
-            {topology.edges.map((edge) => (
+            {edges.map((edge) => (
               <li key={edge.id}>
                 {edge.from} → {edge.to} · {edge.linkType} · {edge.capacityMbps} Mbps{' '}
                 <StatusBadge status={edge.status} />

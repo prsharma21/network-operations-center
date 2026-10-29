@@ -10,7 +10,6 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { useAlarmDetail, useAlarms } from '@/hooks/useAlarms'
 import { listFilterNotice } from '@/services/alarmService'
 import { getNavItem } from '@/routes/navigation'
@@ -70,10 +69,7 @@ export function AlarmsPage() {
   const [notice, setNotice] = useState<string | null>(null)
 
   const { data, loading, error, reload } = useAlarms(query)
-  const { detail, loading: detailLoading, error: detailError } = useAlarmDetail(
-    selectedAlarmId,
-    data?.source === 'demo',
-  )
+  const { detail, loading: detailLoading, error: detailError } = useAlarmDetail(selectedAlarmId)
 
   const updateQuery = useCallback((patch: Partial<AlarmQuery>, alarmId: string | null = selectedAlarmId) => {
     const merged = { ...readQuery(params), ...patch }
@@ -173,10 +169,6 @@ export function AlarmsPage() {
 
       {data && !error ? (
         <>
-          {data.source === 'demo' ? (
-            <DemoDataBanner asOf={data.asOf} missingEndpoints={data.missingEndpoints} />
-          ) : null}
-
           <AlarmFilters
             query={query}
             facets={data.facets}

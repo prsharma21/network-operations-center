@@ -5,7 +5,6 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { KpiCard } from '@/components/dashboard/KpiCard'
 import { RecentEventsList } from '@/components/dashboard/RecentEventsList'
 import { RecentIncidentsTable } from '@/components/dashboard/RecentIncidentsTable'
@@ -70,10 +69,6 @@ export function DashboardPage() {
 
       {data && !loading ? (
         <>
-          {data.source === 'demo' ? (
-            <DemoDataBanner asOf={data.asOf} missingEndpoint={data.missingEndpoint} />
-          ) : null}
-
           <section className="kpi-grid" aria-label="Network health indicators">
             <KpiCard
               label="Active Alarms"

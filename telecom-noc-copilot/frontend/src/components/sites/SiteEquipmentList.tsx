@@ -7,7 +7,7 @@ interface SiteEquipmentListProps {
   equipment: SiteEquipment[]
 }
 
-export function SiteEquipmentList({ equipment }: SiteEquipmentListProps) {
+export function SiteEquipmentList({ equipment = [] }: SiteEquipmentListProps) {
   return (
     <Card title="Equipment" className="card--table">
       {equipment.length === 0 ? (

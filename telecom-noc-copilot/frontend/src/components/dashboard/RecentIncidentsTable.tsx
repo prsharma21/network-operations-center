@@ -13,7 +13,7 @@ interface RecentIncidentsTableProps {
 }
 
 export function RecentIncidentsTable({
-  incidents,
+  incidents = [],
   title = 'Recent incidents',
   emptyDescription = 'No incidents were updated in this time range.',
 }: RecentIncidentsTableProps) {

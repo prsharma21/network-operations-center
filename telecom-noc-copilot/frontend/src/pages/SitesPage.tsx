@@ -5,7 +5,6 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { RecentIncidentsTable } from '@/components/dashboard/RecentIncidentsTable'
 import { TimeRangeFilter } from '@/components/dashboard/TimeRangeFilter'
 import { TrendCharts } from '@/components/dashboard/TrendCharts'
@@ -123,9 +122,6 @@ export function SitesPage() {
 
             {data && !loading ? (
               <>
-                {data.source === 'demo' ? (
-                  <DemoDataBanner asOf={data.asOf} missingEndpoints={data.missingEndpoints} />
-                ) : null}
                 <SiteOverview site={data} />
                 <SiteKpiTiles kpis={data.kpis} />
                 <section className="dashboard-section" aria-label="Site KPI trends">
@@ -137,7 +133,7 @@ export function SitesPage() {
                   <SiteAlarmsTable siteId={data.siteId} alarms={data.activeAlarms} />
                   <SiteDeployments deployments={data.deployments} />
                 </div>
-                <SiteTopology topology={data.topology} synthetic={data.source === 'demo'} />
+                <SiteTopology topology={data.topology} />
                 <RecentIncidentsTable
                   incidents={data.incidents}
                   title="Related incidents"

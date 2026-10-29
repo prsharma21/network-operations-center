@@ -7,7 +7,6 @@ import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
 import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { ReportDocument } from '@/components/reports/ReportDocument'
 import { useIncidentReport, useReportCatalog } from '@/hooks/useIncidentReport'
 import { getNavItem } from '@/routes/navigation'
@@ -91,12 +90,7 @@ export function ReportsPage() {
         ) : null}
 
         {loaded && !report.loading ? (
-          <>
-            {loaded.source === 'demo' ? (
-              <DemoDataBanner asOf={loaded.asOf} missingEndpoints={loaded.missingEndpoints} />
-            ) : null}
-            <ReportDocument report={loaded} />
-          </>
+          <ReportDocument report={loaded} />
         ) : null}
       </div>
     )
@@ -126,9 +120,6 @@ export function ReportsPage() {
 
       {!catalog.loading && !catalog.error ? (
         <>
-          {catalog.data?.source === 'demo' ? (
-            <DemoDataBanner asOf={catalog.data.asOf} missingEndpoints={catalog.data.missingEndpoints} />
-          ) : null}
           <Card title="Generated reports" className="card--table">
             {(catalog.data?.items.length ?? 0) === 0 ? (
               <EmptyState

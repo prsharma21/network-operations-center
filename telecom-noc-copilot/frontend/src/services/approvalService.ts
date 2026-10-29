@@ -1,10 +1,3 @@
-import {
-  getStoredApproval,
-  isApprovalInFlight,
-  recordDemoDecision,
-} from '@/services/demo/approvalDemo'
-import { attachDemoApproval, buildDemoIncident, listDemoIncidents } from '@/services/demo/incidentDemo'
-import { rememberInfrastructureGap, shouldSkipUnreachableRoute } from '@/services/endpointStatus'
 import { ApiError, apiGet, apiPost, isMissingEndpoint } from '@/services/httpClient'
 import { isRecord, readString, unwrapList } from '@/services/jsonParse'
 import type {
@@ -16,25 +9,12 @@ import type {
 } from '@/types/approval'
 import { isApprovalDecision, isTerminalApproval } from '@/types/approval'
 import type { EvidenceRef, IncidentInvestigation } from '@/types/incident'
-import { canUseDemoFallback } from '@/utils/config'
 
-/**
- * FastAPI contracts used by Recommendations and Approvals. The current backend
- * scaffold does not implement these routes or an approve request schema.
- *
- * GET  /approvals
- * POST /incidents/{incident_id}/approve
- *
- * POST body matches the existing JSON POST pattern used by
- * POST /incidents/{incident_id}/investigate: incident_id is in the path.
- * Because no approve schema exists, the body carries only the human decision
- * fields required by this screen (`decision`, `comment`). This records a
- * decision. It does not execute a network change.
- */
 export const APPROVALS_ENDPOINT = '/approvals'
 export const incidentApproveEndpoint = (incidentId: string) => `/incidents/${incidentId}/approve`
 
 const APPROVE_TIMEOUT_MS = 8000
+const inFlight = new Set<string>()
 
 function normalizeStatus(value: string | undefined): ApprovalStatus {
   if (value === 'approved' || value === 'approve') return 'approved'
@@ -82,17 +62,17 @@ export function normalizeApproval(value: unknown): ApprovalRequest | null {
   if (!incidentId) return null
   const status = normalizeStatus(readString(value, 'status', 'approval_status', 'decision'))
   return {
-    id: readString(value, 'id', 'approval_id') ?? `APR-${incidentId}`,
+    id: readString(value, 'id', 'approval_id', 'action_id') ?? `APR-${incidentId}`,
     incidentId,
     title: readString(value, 'title') ?? incidentId,
-    proposedAction: readString(value, 'proposedAction', 'proposed_action', 'next_step', 'remediation') ?? 'No proposed next step was provided.',
+    proposedAction: readString(value, 'proposedAction', 'proposed_action', 'next_step', 'remediation', 'description') ?? 'No proposed next step was provided.',
     severity: (readString(value, 'severity') ?? 'info') as ApprovalRequest['severity'],
     priority: readString(value, 'priority') ?? 'P3',
-    rationale: readString(value, 'rationale', 'reason') ?? 'No rationale was provided.',
+    rationale: readString(value, 'rationale', 'reason', 'description') ?? 'No rationale was provided.',
     evidence: normalizeEvidence(value.evidence ?? value.supporting_evidence),
     risks: readString(value, 'risks', 'potential_risks') ?? null,
     expectedOutcome: readString(value, 'expectedOutcome', 'expected_outcome') ?? null,
-    requestedAt: readString(value, 'requestedAt', 'requested_at', 'created_at') ?? new Date().toISOString(),
+    requestedAt: readString(value, 'requestedAt', 'requested_at', 'proposed_at', 'created_at') ?? new Date().toISOString(),
     status,
     approver: readString(value, 'approver', 'approved_by') ?? null,
     comment: readString(value, 'comment', 'reason') ?? null,
@@ -100,13 +80,6 @@ export function normalizeApproval(value: unknown): ApprovalRequest | null {
     audit: normalizeAudit(value.audit),
     source: 'api',
   }
-}
-
-function demoQueue(): ApprovalRequest[] {
-  return listDemoIncidents()
-    .map((item) => buildDemoIncident(item.incidentId).recommendation)
-    .filter((item): item is ApprovalRequest => Boolean(item))
-    .sort((left, right) => right.requestedAt.localeCompare(left.requestedAt))
 }
 
 export async function listApprovals(
@@ -129,13 +102,12 @@ export async function listApprovals(
       missingEndpoints: [],
     }
   } catch (error) {
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      const items = demoQueue().filter((item) => !filters.status || item.status === filters.status)
+    if (isMissingEndpoint(error)) {
       return {
-        items,
-        source: 'demo',
-        asOf: items.reduce((latest, item) => (item.requestedAt > latest ? item.requestedAt : latest), items[0]?.requestedAt ?? new Date().toISOString()),
-        missingEndpoints: [APPROVALS_ENDPOINT, '/incidents/{incident_id}/approve'],
+        items: [],
+        source: 'api',
+        asOf: new Date().toISOString(),
+        missingEndpoints: [APPROVALS_ENDPOINT],
       }
     }
     throw error
@@ -156,7 +128,7 @@ export async function submitApproval(
   if (!isApprovalDecision(request.decision)) {
     throw new ApiError('Unsupported approval decision.', 400, path)
   }
-  if (isApprovalInFlight(incidentId)) {
+  if (inFlight.has(incidentId)) {
     throw new ApiError('An approval decision is already being recorded for this incident.', 409, path)
   }
   if (options.current && isTerminalApproval(options.current.status)) {
@@ -171,21 +143,7 @@ export async function submitApproval(
     comment: request.comment.trim(),
   }
 
-  const fallback = (): SubmitApprovalResult => {
-    const current = options.current
-      ?? getStoredApproval(incidentId)
-      ?? buildDemoIncident(incidentId).recommendation
-    if (!current) {
-      throw new ApiError('No recommendation is available to approve for this incident.', 404, path)
-    }
-    const approval = recordDemoDecision(current, body.decision, body.comment)
-    return { approval, investigation: attachDemoApproval(incidentId, approval) }
-  }
-
-  if (canUseDemoFallback() && shouldSkipUnreachableRoute(path)) {
-    return fallback()
-  }
-
+  inFlight.add(incidentId)
   try {
     const payload = await apiPost<unknown>(path, body, { signal: options.signal, timeoutMs: APPROVE_TIMEOUT_MS })
     if (isRecord(payload) && Array.isArray(payload.correlatedAlarms ?? payload.correlated_alarms ?? [])) {
@@ -209,11 +167,7 @@ export async function submitApproval(
       throw new ApiError('FastAPI approve payload was not recognized', 502, path)
     }
     return { approval, investigation: null }
-  } catch (error) {
-    rememberInfrastructureGap(path, error)
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      return fallback()
-    }
-    throw error
+  } finally {
+    inFlight.delete(incidentId)
   }
 }

@@ -10,7 +10,7 @@ from app.api.deps import get_alarm_service
 from app.schemas.alarm import AlarmListResponse, NetworkAlarm, NetworkAlarmCreate
 from app.schemas.enums import AlarmStatus, Severity
 from oss_api.alarm_service import OssAlarmService
-from oss_api.exceptions import DuplicateAlarm, SiteNotFound
+from oss_api.exceptions import AlarmNotFound, DuplicateAlarm, SiteNotFound
 
 router = APIRouter(tags=["alarms"])
 
@@ -66,3 +66,19 @@ def list_alarms(
         page=page,
         page_size=page_size,
     )
+
+
+@router.get(
+    "/alarms/{alarm_id}",
+    response_model=NetworkAlarm,
+    response_model_exclude_none=True,
+    responses={404: {"description": "Alarm ID is not in the catalog"}},
+)
+def get_alarm(
+    alarm_id: str,
+    service: Annotated[OssAlarmService, Depends(get_alarm_service)],
+) -> NetworkAlarm:
+    try:
+        return service.get_alarm(alarm_id)
+    except AlarmNotFound as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

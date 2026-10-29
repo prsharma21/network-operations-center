@@ -19,7 +19,7 @@ from app.services.alarm_enrichment import enrich_alarm_from_site
 from app.services.alarm_fingerprint import build_alarm_fingerprint
 from app.services.alarm_severity import compute_alarm_severity
 from app.utils.logging import log_structured
-from oss_api.exceptions import DuplicateAlarm, SiteNotFound
+from oss_api.exceptions import AlarmNotFound, DuplicateAlarm, SiteNotFound
 from oss_api.repository import OssDataRepository
 
 logger = logging.getLogger("telecom_noc_copilot.alarms")
@@ -141,6 +141,18 @@ class OssAlarmService:
                 duration_ms=_duration_ms(started),
             )
             raise
+
+    def get_alarm(self, alarm_id: str) -> NetworkAlarm:
+        requested = alarm_id.strip()
+        if not requested:
+            raise AlarmNotFound(alarm_id)
+        record = self._repository.get_alarm_record(requested)
+        if record is None:
+            raise AlarmNotFound(requested)
+        try:
+            return NetworkAlarm.model_validate(record)
+        except ValidationError as exc:
+            raise AlarmNotFound(requested) from exc
 
     def list_alarms(
         self,

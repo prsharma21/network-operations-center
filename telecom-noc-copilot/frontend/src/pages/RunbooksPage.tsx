@@ -5,14 +5,11 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { RunbookPassageCard } from '@/components/runbooks/RunbookPassageCard'
 import { RunbookSearchForm } from '@/components/runbooks/RunbookSearchForm'
 import { useRunbookSearch } from '@/hooks/useRunbookSearch'
 import { getNavItem } from '@/routes/navigation'
-import { demoRunbookFacets } from '@/services/demo/runbookDemo'
 import type { RunbookFacets, RunbookSearchQuery } from '@/types/runbook'
-import { canUseDemoFallback } from '@/utils/config'
 
 const page = getNavItem('/runbooks')
 const EMPTY_FACETS: RunbookFacets = {
@@ -52,7 +49,7 @@ export function RunbooksPage() {
   const enabled = hasSearchInput(query)
   const [draft, setDraft] = useState(query.q ?? '')
   const { data, loading, error, searched, reload } = useRunbookSearch(query, enabled)
-  const facets = data?.facets ?? (canUseDemoFallback() ? demoRunbookFacets() : EMPTY_FACETS)
+  const facets = data?.facets ?? EMPTY_FACETS
 
   const updateQuery = useCallback((patch: Partial<RunbookSearchQuery>) => {
     const merged = { ...readQuery(params), ...patch }
@@ -76,10 +73,6 @@ export function RunbooksPage() {
         actions={enabled ? <Button variant="secondary" onClick={reload}>Retry</Button> : null}
       />
 
-      {data?.source === 'demo' ? (
-        <DemoDataBanner asOf={data.asOf} missingEndpoints={data.missingEndpoints} />
-      ) : null}
-
       <RunbookSearchForm
         query={query}
         draft={draft}
@@ -89,13 +82,6 @@ export function RunbooksPage() {
         onSubmit={onSubmit}
         onClear={onClear}
       />
-
-      {data?.source === 'demo' && data.filtering === 'client' && enabled ? (
-        <p className="filter-notice">
-          Search is applied in the browser against the labeled synthetic runbook catalog. Citations refer only to
-          `data/runbooks/runbook_catalog.json`. Amazon Bedrock is not called from this page.
-        </p>
-      ) : null}
 
       {!enabled ? (
         <EmptyState

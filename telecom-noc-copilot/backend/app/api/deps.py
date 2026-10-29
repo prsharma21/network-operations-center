@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from functools import lru_cache
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import Annotated, Any
 
 from fastapi import Depends
 
@@ -16,9 +16,6 @@ from oss_api.repository import JsonOssRepository, OssDataRepository
 from oss_api.service import OssSiteService
 from oss_api.telemetry_service import OssTelemetryService
 from oss_api.ticket_service import OssTicketService
-
-if TYPE_CHECKING:
-    from sqlalchemy.orm import Session
 
 
 def get_db_session() -> Generator[Any, None, None]:
@@ -36,7 +33,7 @@ def get_json_oss_repository() -> JsonOssRepository:
 
 
 def get_oss_repository(
-    db: Annotated[Session | None, Depends(get_db_session)],
+    db: Annotated[Any, Depends(get_db_session)],
 ) -> OssDataRepository:
     json_repo = get_json_oss_repository()
     if db is None:

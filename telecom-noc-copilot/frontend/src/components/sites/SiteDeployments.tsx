@@ -8,7 +8,7 @@ interface SiteDeploymentsProps {
   deployments: SiteDeploymentRow[]
 }
 
-export function SiteDeployments({ deployments }: SiteDeploymentsProps) {
+export function SiteDeployments({ deployments = [] }: SiteDeploymentsProps) {
   return (
     <Card title="Recent deployments">
       {deployments.length === 0 ? (

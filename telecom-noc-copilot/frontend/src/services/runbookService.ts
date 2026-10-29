@@ -1,5 +1,3 @@
-import { searchDemoRunbooks, searchDemoRunbooksForIncident } from '@/services/demo/runbookDemo'
-import { rememberInfrastructureGap, shouldSkipUnreachableRoute } from '@/services/endpointStatus'
 import { ApiError, apiGet, isMissingEndpoint } from '@/services/httpClient'
 import { isRecord, readString, readStringArray, unwrapList } from '@/services/jsonParse'
 import type {
@@ -8,29 +6,19 @@ import type {
   RunbookSearchQuery,
   RunbookSearchResult,
 } from '@/types/runbook'
-import { canUseDemoFallback } from '@/utils/config'
 
-/**
- * FastAPI contracts used by Runbook Guidance. The current backend scaffold
- * does not implement these routes. The browser never calls Amazon Bedrock.
- *
- * GET /runbooks/search?q=&alarm_type=&technology=&kpi=&incident_id=
- * GET /incidents/{incident_id}/runbooks
- */
 export const RUNBOOK_SEARCH_ENDPOINT = '/runbooks/search'
 export const incidentRunbooksEndpoint = (incidentId: string) => `/incidents/${incidentId}/runbooks`
 
-let runbooksEndpointUnavailable = false
-
 function unwrapPassages(payload: unknown): unknown[] {
-  return unwrapList(payload, 'passages', 'documents', 'results')
+  return unwrapList(payload, 'passages', 'documents', 'results', 'items')
 }
 
 function normalizePassage(value: unknown): RunbookPassage | null {
   if (!isRecord(value)) return null
-  const documentId = readString(value, 'documentId', 'document_id', 'id')
+  const documentId = readString(value, 'documentId', 'document_id', 'id', 'reference_id')
   const title = readString(value, 'title')
-  const sourceRef = readString(value, 'sourceRef', 'source_ref', 'source', 'uri')
+  const sourceRef = readString(value, 'sourceRef', 'source_ref', 'source', 'uri', 'source_uri')
   if (!documentId || !title || !sourceRef) return null
   const relatedIncidents = Array.isArray(value.relatedIncidents ?? value.related_incidents)
     ? (value.relatedIncidents ?? value.related_incidents) as unknown[]
@@ -43,7 +31,7 @@ function normalizePassage(value: unknown): RunbookPassage | null {
     documentId,
     title,
     sourceRef,
-    excerpt: readString(value, 'excerpt', 'body', 'text') ?? '',
+    excerpt: readString(value, 'excerpt', 'body', 'text', 'description') ?? '',
     technology: readStringArray(value.technology ?? value.technologies),
     alarmTypes: readStringArray(value.alarmTypes ?? value.alarm_types),
     steps: readStringArray(value.steps ?? value.troubleshooting_steps),
@@ -74,7 +62,7 @@ function normalizePassage(value: unknown): RunbookPassage | null {
     metadata: isRecord(value.metadata)
       ? Object.fromEntries(Object.entries(value.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
       : {},
-    score: typeof value.score === 'number' ? value.score : 0,
+    score: typeof value.score === 'number' ? value.score : readString(value, 'relevance_score') ? Number(value.relevance_score) : 0,
   }
 }
 
@@ -105,24 +93,25 @@ function hasSearchInput(query: RunbookSearchQuery): boolean {
   return Boolean(query.q?.trim() || query.alarmType || query.technology || query.kpi || query.incidentId)
 }
 
+function emptyResult(query: RunbookSearchQuery, missingEndpoints: string[] = []): RunbookSearchResult {
+  return {
+    query,
+    passages: [],
+    terms: query.q?.trim().split(/\s+/).filter(Boolean) ?? [],
+    facets: emptyFacets(),
+    source: 'api',
+    filtering: 'server',
+    missingEndpoints,
+    asOf: new Date().toISOString(),
+  }
+}
+
 export async function searchRunbooks(
   query: RunbookSearchQuery,
-  options: { preferDemo?: boolean; signal?: AbortSignal } = {},
+  options: { signal?: AbortSignal } = {},
 ): Promise<RunbookSearchResult> {
   if (!hasSearchInput(query)) {
-    const demo = searchDemoRunbooks(query)
-    return {
-      ...demo,
-      passages: [],
-      terms: [],
-      source: runbooksEndpointUnavailable && canUseDemoFallback() ? 'demo' : 'api',
-      missingEndpoints: runbooksEndpointUnavailable ? [RUNBOOK_SEARCH_ENDPOINT] : [],
-      facets: canUseDemoFallback() ? demo.facets : emptyFacets(),
-    }
-  }
-
-  if (canUseDemoFallback() && (runbooksEndpointUnavailable || shouldSkipUnreachableRoute(RUNBOOK_SEARCH_ENDPOINT) || options.preferDemo)) {
-    return searchDemoRunbooks(query)
+    return emptyResult(query)
   }
 
   try {
@@ -146,10 +135,8 @@ export async function searchRunbooks(
       asOf: readString(meta, 'asOf', 'as_of') ?? new Date().toISOString(),
     }
   } catch (error) {
-    rememberInfrastructureGap(RUNBOOK_SEARCH_ENDPOINT, error)
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      runbooksEndpointUnavailable = true
-      return searchDemoRunbooks(query)
+    if (isMissingEndpoint(error)) {
+      return emptyResult(query, [RUNBOOK_SEARCH_ENDPOINT])
     }
     throw error
   }
@@ -157,17 +144,10 @@ export async function searchRunbooks(
 
 export async function getIncidentRunbooks(
   incidentId: string,
-  context: { title?: string; alarmTypes?: string[] } = {},
-  options: { preferDemo?: boolean; signal?: AbortSignal } = {},
+  _context: { title?: string; alarmTypes?: string[] } = {},
+  options: { signal?: AbortSignal } = {},
 ): Promise<RunbookSearchResult> {
   const path = incidentRunbooksEndpoint(incidentId)
-  if (canUseDemoFallback() && (runbooksEndpointUnavailable || shouldSkipUnreachableRoute(path) || options.preferDemo)) {
-    return searchDemoRunbooksForIncident({
-      incidentId,
-      title: context.title ?? '',
-      alarmTypes: context.alarmTypes ?? [],
-    })
-  }
   try {
     const payload = await apiGet<unknown>(path, { signal: options.signal })
     const passages = unwrapPassages(payload).map(normalizePassage).filter((item): item is RunbookPassage => Boolean(item))
@@ -182,14 +162,8 @@ export async function getIncidentRunbooks(
       asOf: new Date().toISOString(),
     }
   } catch (error) {
-    rememberInfrastructureGap(path, error)
-    rememberInfrastructureGap(RUNBOOK_SEARCH_ENDPOINT, error)
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      runbooksEndpointUnavailable = true
-      return searchRunbooks(
-        { q: [context.title, ...(context.alarmTypes ?? [])].join(' '), incidentId },
-        { preferDemo: true, signal: options.signal },
-      )
+    if (isMissingEndpoint(error)) {
+      return emptyResult({ incidentId }, [path])
     }
     throw error
   }

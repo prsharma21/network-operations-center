@@ -19,7 +19,7 @@ interface IncidentTimelineProps {
 }
 
 export function IncidentTimeline({
-  events,
+  events = [],
   title = 'Timeline',
   emptyTitle = 'No timeline events',
   emptyDescription = 'Alarms, KPI anomalies, deployments, and investigation steps will appear here.',

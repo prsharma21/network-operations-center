@@ -16,7 +16,7 @@ interface NetworkEvidenceProps {
   items: NetworkEvidenceItem[]
 }
 
-export function NetworkEvidence({ items }: NetworkEvidenceProps) {
+export function NetworkEvidence({ items = [] }: NetworkEvidenceProps) {
   return (
     <Card title="Network evidence">
       {items.length === 0 ? (

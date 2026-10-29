@@ -10,7 +10,7 @@ interface CorrelatedAlarmsProps {
   alarms: CorrelatedAlarm[]
 }
 
-export function CorrelatedAlarms({ alarms }: CorrelatedAlarmsProps) {
+export function CorrelatedAlarms({ alarms = [] }: CorrelatedAlarmsProps) {
   return (
     <Card title="Correlated alarms" className="card--table">
       {alarms.length === 0 ? (

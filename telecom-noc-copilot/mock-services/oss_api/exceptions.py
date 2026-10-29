@@ -40,3 +40,9 @@ class IncidentNotFound(LookupError):
     def __init__(self, incident_id: str) -> None:
         self.incident_id = incident_id
         super().__init__(f"Incident {incident_id} was not found")
+
+
+class AlarmNotFound(LookupError):
+    def __init__(self, alarm_id: str) -> None:
+        self.alarm_id = alarm_id
+        super().__init__(f"Alarm {alarm_id} was not found")

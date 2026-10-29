@@ -88,3 +88,29 @@ def list_site_metrics(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=str(exc),
         ) from exc
+
+
+@router.get(
+    "/telemetry",
+    response_model=TelemetryListResponse,
+    responses={422: {"description": "Invalid time range or pagination values"}},
+)
+def list_metrics(
+    service: Annotated[OssTelemetryService, Depends(get_telemetry_service)],
+    start_time: str | None = Query(default=None),
+    end_time: str | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=100, ge=1, le=500, alias="page_size"),
+) -> TelemetryListResponse:
+    try:
+        return service.list_metrics(
+            start_time=_optional_utc_query(start_time),
+            end_time=_optional_utc_query(end_time),
+            page=page,
+            page_size=page_size,
+        )
+    except InvalidTimeRange as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=str(exc),
+        ) from exc

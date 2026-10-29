@@ -23,8 +23,9 @@ export function RunbookEvidence({
   onRetrieve,
 }: RunbookEvidenceProps) {
   const loading = investigating || retrieving || incident.investigationStatus === 'in_progress'
+  const passages = incident.runbookPassages ?? []
   const terms = [
-    ...incident.correlatedAlarms.map((alarm) => alarm.alarmType),
+    ...(incident.correlatedAlarms ?? []).map((alarm) => alarm.alarmType),
     ...incident.title.split(/\s+/),
   ]
 
@@ -72,7 +73,7 @@ export function RunbookEvidence({
 
       {!loading && !error && incident.runbookRetrieval === 'retrieved' ? (
         <div className="runbook-results">
-          {incident.runbookPassages.map((passage) => (
+          {passages.map((passage) => (
             <RunbookPassageCard key={passage.id} passage={passage} terms={terms} />
           ))}
           <p className="muted">

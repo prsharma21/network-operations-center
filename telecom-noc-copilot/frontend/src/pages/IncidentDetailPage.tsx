@@ -4,7 +4,6 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { ApprovalPanel } from '@/components/incidents/ApprovalPanel'
 import { CandidateCauses } from '@/components/incidents/CandidateCauses'
 import { CorrelatedAlarms } from '@/components/incidents/CorrelatedAlarms'
@@ -68,9 +67,6 @@ export function IncidentDetailPage() {
 
       {data && !loading ? (
         <div className="incident-workspace">
-          {data.source === 'demo' ? (
-            <DemoDataBanner asOf={data.asOf} missingEndpoints={data.missingEndpoints} />
-          ) : null}
           <IncidentSummary incident={data} />
           <InvestigationControls incident={data} investigating={investigating} onInvestigate={() => void investigate()} />
           <CorrelatedAlarms alarms={data.correlatedAlarms} />

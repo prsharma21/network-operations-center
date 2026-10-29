@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { Icon } from '@/components/common/Icon'
 import { NAV_ITEMS } from '@/routes/navigation'
-import { appConfig, canUseDemoFallback } from '@/utils/config'
+import { appConfig } from '@/utils/config'
 
 function displayApiHost(url: string): string {
   try {
@@ -58,14 +58,11 @@ export function Sidebar({ collapsed, mobileOpen, onToggleCollapse, onNavigate }:
 
       <div className="sidebar__footer">
         <p className="sidebar__footer-text">
-          {canUseDemoFallback() ? 'Labeled demo fallback is available. ' : ''}
           No live network changes.
         </p>
         {import.meta.env.DEV ? (
           <p className="sidebar__devmeta" title={appConfig.apiBaseUrl}>
             API {displayApiHost(appConfig.apiBaseUrl)}
-            <br />
-            Demo fallback {appConfig.useDemoData ? 'on' : 'off'}
           </p>
         ) : null}
         <button

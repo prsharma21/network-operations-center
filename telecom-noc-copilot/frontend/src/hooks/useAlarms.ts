@@ -50,7 +50,7 @@ interface AlarmDetailState {
   error: string | null
 }
 
-export function useAlarmDetail(alarmId: string | null, preferDemo: boolean): AlarmDetailState {
+export function useAlarmDetail(alarmId: string | null): AlarmDetailState {
   const [detail, setDetail] = useState<AlarmDetail | null>(null)
   const [loading, setLoading] = useState(Boolean(alarmId))
   const [error, setError] = useState<string | null>(null)
@@ -67,7 +67,7 @@ export function useAlarmDetail(alarmId: string | null, preferDemo: boolean): Ala
     setLoading(true)
     setError(null)
 
-    getAlarmDetail(alarmId, { preferDemo, signal: controller.signal })
+    getAlarmDetail(alarmId, { signal: controller.signal })
       .then((result) => {
         if (!controller.signal.aborted) setDetail(result)
       })
@@ -81,7 +81,7 @@ export function useAlarmDetail(alarmId: string | null, preferDemo: boolean): Ala
       })
 
     return () => controller.abort()
-  }, [alarmId, preferDemo])
+  }, [alarmId])
 
   return { detail, loading, error }
 }

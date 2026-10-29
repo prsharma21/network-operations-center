@@ -11,7 +11,7 @@ interface SiteAlarmsTableProps {
   alarms: SiteAlarmRow[]
 }
 
-export function SiteAlarmsTable({ siteId, alarms }: SiteAlarmsTableProps) {
+export function SiteAlarmsTable({ siteId, alarms = [] }: SiteAlarmsTableProps) {
   return (
     <Card title="Active alarms" className="card--table">
       {alarms.length === 0 ? (

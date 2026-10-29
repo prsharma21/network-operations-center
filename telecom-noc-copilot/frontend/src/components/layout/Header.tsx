@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog'
 import { Icon } from '@/components/common/Icon'
-import { StatusBadge } from '@/components/common/StatusBadge'
 import { NotificationMenu } from '@/components/layout/NotificationMenu'
 import { ProfileMenu } from '@/components/layout/ProfileMenu'
 import type { Breadcrumb } from '@/types/ui'
-import { canUseDemoFallback } from '@/utils/config'
 
 interface HeaderProps {
   title: string
@@ -96,7 +94,6 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
         </form>
 
         <div className="header__tools">
-          {canUseDemoFallback() ? <StatusBadge status="demo" /> : null}
           <NotificationMenu open={openMenu === 'notifications'} onOpenChange={(next) => setOpenMenu(next ? 'notifications' : null)} />
           <ProfileMenu
             open={openMenu === 'profile'}
@@ -118,7 +115,7 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
       <ConfirmationDialog
         open={confirmSignOut}
         title="Sign out?"
-        message="This is a demo profile. Confirming will not end a real session or change the network."
+        message="Confirming will not end a real session or change the network."
         confirmLabel="Sign out"
         cancelLabel="Stay signed in"
         onCancel={closeSignOut}

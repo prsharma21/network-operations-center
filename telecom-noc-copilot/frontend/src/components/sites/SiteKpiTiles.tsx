@@ -49,7 +49,18 @@ const TILES: { name: KpiName; label: string; value: (kpis: SiteKpiSnapshot) => s
   },
 ]
 
-export function SiteKpiTiles({ kpis }: SiteKpiTilesProps) {
+const EMPTY_KPIS: SiteKpiSnapshot = {
+  latencyMs: null,
+  throughputMbps: null,
+  utilizationPct: null,
+  droppedCallRatePct: null,
+  latencyLevel: 'unavailable',
+  throughputLevel: 'unavailable',
+  utilizationLevel: 'unavailable',
+  droppedCallLevel: 'unavailable',
+}
+
+export function SiteKpiTiles({ kpis = EMPTY_KPIS }: SiteKpiTilesProps) {
   return (
     <section className="kpi-grid kpi-grid--four" aria-label="Site key performance indicators">
       {TILES.map((tile) => {

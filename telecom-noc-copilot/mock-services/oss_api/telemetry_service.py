@@ -68,6 +68,36 @@ class OssTelemetryService:
             as_of=as_of,
         )
 
+    def list_metrics(
+        self,
+        *,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+        page: int = 1,
+        page_size: int = 25,
+    ) -> TelemetryListResponse:
+        if start_time is not None and end_time is not None and start_time > end_time:
+            raise InvalidTimeRange()
+
+        metrics = self._validated_metrics()
+        if start_time is not None:
+            metrics = [item for item in metrics if item.timestamp >= start_time]
+        if end_time is not None:
+            metrics = [item for item in metrics if item.timestamp <= end_time]
+
+        metrics.sort(key=lambda item: (item.timestamp, item.metric_id))
+        total = len(metrics)
+        start = (page - 1) * page_size
+        page_items = metrics[start : start + page_size]
+        as_of = metrics[-1].timestamp if metrics else datetime.now(UTC)
+        return TelemetryListResponse(
+            items=page_items,
+            total=total,
+            page=page,
+            page_size=page_size,
+            as_of=as_of,
+        )
+
     def _validated_metrics(self) -> list[TelemetryMetric]:
         parsed: list[TelemetryMetric] = []
         for row in self._repository.list_metric_records():

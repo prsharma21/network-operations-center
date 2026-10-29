@@ -33,7 +33,7 @@ function EvidenceList({ heading, items }: { heading: string; items: EvidenceRef[
 }
 
 export function CandidateCauses({
-  candidates,
+  candidates = [],
   investigationStatus,
   emptyDescription = 'Run Investigate Incident to generate ranked hypotheses with supporting and contradictory evidence.',
 }: CandidateCausesProps) {

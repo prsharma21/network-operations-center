@@ -7,7 +7,6 @@ import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
 import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { useIncidents } from '@/hooks/useIncidents'
 import { getNavItem } from '@/routes/navigation'
 import { investigationStatusLabel, investigationStatusTone } from '@/types/incident'
@@ -20,7 +19,7 @@ export function IncidentsPage() {
   const navigate = useNavigate()
   const status = params.get('status') ?? undefined
   const siteId = params.get('site') ?? undefined
-  const { items, source, asOf, missingEndpoints, loading, error, reload } = useIncidents({ status, siteId })
+  const { items, loading, error, reload } = useIncidents({ status, siteId })
 
   return (
     <div className="page">
@@ -45,9 +44,6 @@ export function IncidentsPage() {
 
       {!loading && !error ? (
         <>
-          {source === 'demo' && asOf ? (
-            <DemoDataBanner asOf={asOf} missingEndpoints={missingEndpoints} />
-          ) : null}
           <Card title={status === 'open' ? 'Open incidents' : 'Incident catalog'} className="card--table">
             {items.length === 0 ? (
               <EmptyState

@@ -1,23 +1,14 @@
 import { normalizeApproval } from '@/services/approvalService'
-import { composeIncidentReport, incidentReportEndpoint, listDemoReports } from '@/services/demo/reportDemo'
-import { rememberInfrastructureGap, shouldSkipUnreachableRoute } from '@/services/endpointStatus'
 import { ApiError, apiGet, isMissingEndpoint } from '@/services/httpClient'
 import { getIncident, listIncidents } from '@/services/incidentService'
 import { isRecord, readString } from '@/services/jsonParse'
 import type { IncidentInvestigation } from '@/types/incident'
 import type { IncidentReport, ReportCatalogResult, ReportListItem } from '@/types/report'
 import { kpiAnomaliesFrom, reportAuditFrom, reportSummary } from '@/types/report'
-import { canUseDemoFallback } from '@/utils/config'
 
-/**
- * FastAPI contracts used by the Incident Report page. The current backend
- * scaffold does not implement the report route.
- *
- * GET /incidents/{incident_id}/report
- * Falls back to GET /incidents and GET /incidents/{incident_id} without
- * inventing missing evidence, approvals, or executed actions.
- */
-export { incidentReportEndpoint }
+export function incidentReportEndpoint(incidentId: string): string {
+  return `/incidents/${incidentId}/report`
+}
 
 function unwrapReport(value: unknown): unknown {
   if (!isRecord(value)) return value
@@ -28,6 +19,51 @@ function unwrapReport(value: unknown): unknown {
 function isReportPayload(value: unknown): value is Record<string, unknown> {
   if (!isRecord(value)) return false
   return typeof (value.incidentId ?? value.incident_id) === 'string'
+}
+
+function composeIncidentReport(
+  incident: IncidentInvestigation,
+  requestedReportId?: string,
+): IncidentReport {
+  const path = incidentReportEndpoint(incident.incidentId)
+  if (!incident.reportId) {
+    throw new ApiError(`No report is available for ${incident.incidentId}. Investigate the incident first.`, 404, path)
+  }
+  if (requestedReportId && requestedReportId !== incident.reportId) {
+    throw new ApiError(`Report ${requestedReportId} was not found for ${incident.incidentId}.`, 404, path)
+  }
+
+  const generatedAt = incident.timeline
+    .filter((event) => event.kind === 'investigation')
+    .map((event) => event.timestamp)
+    .sort()
+    .at(-1) ?? incident.asOf
+
+  return {
+    reportId: incident.reportId,
+    incidentId: incident.incidentId,
+    title: incident.title,
+    summary: reportSummary(incident),
+    severity: incident.severity,
+    priority: incident.priority,
+    status: incident.status,
+    affectedSites: incident.affectedSites,
+    createdAt: incident.createdAt,
+    generatedAt,
+    investigationStatus: incident.investigationStatus,
+    timeline: incident.timeline,
+    correlatedAlarms: incident.correlatedAlarms,
+    kpiAnomalies: kpiAnomaliesFrom(incident.timeline),
+    candidates: incident.candidates,
+    runbookPassages: incident.runbookPassages,
+    runbookRetrieval: incident.runbookRetrieval,
+    recommendation: incident.recommendation,
+    actionStatus: 'not_executed',
+    audit: reportAuditFrom(incident),
+    source: 'api',
+    missingEndpoints: Array.from(new Set([...incident.missingEndpoints, path])),
+    asOf: incident.asOf,
+  }
 }
 
 function normalizeReport(value: unknown, incidentId: string, fallback?: IncidentInvestigation): IncidentReport | null {
@@ -94,28 +130,11 @@ function normalizeReport(value: unknown, incidentId: string, fallback?: Incident
   }
 }
 
-async function composeFromIncident(
-  incidentId: string,
-  requestedReportId: string | undefined,
-  signal: AbortSignal | undefined,
-  missingEndpoints: string[],
-): Promise<IncidentReport> {
-  const incident = await getIncident(incidentId, signal)
-  const report = composeIncidentReport(incident, requestedReportId)
-  return {
-    ...report,
-    missingEndpoints: Array.from(new Set([...missingEndpoints, ...report.missingEndpoints])),
-  }
-}
-
 export async function getIncidentReport(
   incidentId: string,
   options: { reportId?: string; signal?: AbortSignal } = {},
 ): Promise<IncidentReport> {
   const path = incidentReportEndpoint(incidentId)
-  if (canUseDemoFallback() && shouldSkipUnreachableRoute(path)) {
-    return composeFromIncident(incidentId, options.reportId, options.signal, [path])
-  }
   try {
     const payload = await apiGet<unknown>(path, { signal: options.signal })
     const report = normalizeReport(payload, incidentId)
@@ -127,54 +146,30 @@ export async function getIncidentReport(
     }
     return report
   } catch (error) {
-    rememberInfrastructureGap(path, error)
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      return composeFromIncident(incidentId, options.reportId, options.signal, [path])
-    }
-    throw error
+    if (!isMissingEndpoint(error)) throw error
+    const incident = await getIncident(incidentId, options.signal)
+    return composeIncidentReport(incident, options.reportId)
   }
 }
 
 export async function listIncidentReports(signal?: AbortSignal): Promise<ReportCatalogResult> {
-  try {
-    const listed = await listIncidents({}, signal)
-    const items: ReportListItem[] = listed.items.flatMap((item) => {
-      if (!item.reportId) return []
-      return [{
-        incidentId: item.incidentId,
-        reportId: item.reportId,
-        title: item.title,
-        severity: item.severity,
-        status: item.status,
-        createdAt: item.createdAt,
-        generatedAt: item.createdAt,
-      }]
-    })
-    if (listed.source === 'api') {
-      return {
-        items,
-        source: 'api',
-        asOf: listed.asOf,
-        missingEndpoints: [],
-      }
-    }
-    const demo = listDemoReports()
-    return {
-      items: demo,
-      source: 'demo',
-      asOf: demo[0]?.generatedAt ?? listed.asOf,
-      missingEndpoints: Array.from(new Set([...listed.missingEndpoints, '/incidents/{incident_id}/report'])),
-    }
-  } catch (error) {
-    if (canUseDemoFallback() && isMissingEndpoint(error)) {
-      const demo = listDemoReports()
-      return {
-        items: demo,
-        source: 'demo',
-        asOf: demo[0]?.generatedAt ?? new Date().toISOString(),
-        missingEndpoints: ['/incidents', '/incidents/{incident_id}/report'],
-      }
-    }
-    throw error
+  const listed = await listIncidents({}, signal)
+  const items: ReportListItem[] = listed.items.flatMap((item) => {
+    if (!item.reportId) return []
+    return [{
+      incidentId: item.incidentId,
+      reportId: item.reportId,
+      title: item.title,
+      severity: item.severity,
+      status: item.status,
+      createdAt: item.createdAt,
+      generatedAt: item.createdAt,
+    }]
+  })
+  return {
+    items,
+    source: 'api',
+    asOf: listed.asOf,
+    missingEndpoints: [],
   }
 }

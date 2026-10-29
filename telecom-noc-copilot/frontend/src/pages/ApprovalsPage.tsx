@@ -5,7 +5,6 @@ import { Button } from '@/components/common/Button'
 import { ErrorMessage } from '@/components/common/ErrorMessage'
 import { LoadingIndicator } from '@/components/common/LoadingIndicator'
 import { PageHeader } from '@/components/common/PageHeader'
-import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner'
 import { useApprovals } from '@/hooks/useApprovals'
 import { getNavItem } from '@/routes/navigation'
 import { APPROVAL_STATUS_FILTERS, type ApprovalStatus } from '@/types/approval'
@@ -53,10 +52,6 @@ export function ApprovalsPage() {
 
       {!loading && !error ? (
         <>
-          {data?.source === 'demo' ? (
-            <DemoDataBanner asOf={data.asOf} missingEndpoints={data.missingEndpoints} />
-          ) : null}
-
           <div className="alarm-filters">
             <label className="alarm-filters__field">
               <span>Status</span>
