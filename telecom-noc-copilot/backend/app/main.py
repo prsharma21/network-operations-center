@@ -18,7 +18,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
@@ -30,7 +29,6 @@ from app.api.v1.endpoints.sites import router as sites_router
 from app.api.v1.endpoints.telemetry import router as telemetry_router
 from app.api.v1.endpoints.tickets import router as tickets_router
 from app.api.v1.router import api_router
-from app.db.session import reset_engine
 from app.utils.logging import configure_logging, log_structured
 from app.utils.settings import get_settings, redact_database_url
 
@@ -68,7 +66,12 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
         database_target,
     )
     yield
-    reset_engine()
+    try:
+        from app.db.session import reset_engine
+    except ImportError:
+        pass
+    else:
+        reset_engine()
     logger.info("Shutting down %s", settings.app_title)
 
 
@@ -122,13 +125,20 @@ def create_app() -> FastAPI:
             content={"detail": jsonable_encoder(exc.errors())},
         )
 
-    @application.exception_handler(SQLAlchemyError)
-    async def database_error(_request: Request, _exc: SQLAlchemyError) -> JSONResponse:
-        log_structured(logger, "database_error", outcome="error", error_category="database")
-        return JSONResponse(
-            status_code=500,
-            content={"detail": "A database error occurred"},
-        )
+    try:
+        from sqlalchemy.exc import SQLAlchemyError
+    except ImportError:
+        SQLAlchemyError = None  # type: ignore[misc, assignment]
+
+    if SQLAlchemyError is not None:
+
+        @application.exception_handler(SQLAlchemyError)
+        async def database_error(_request: Request, _exc: Exception) -> JSONResponse:
+            log_structured(logger, "database_error", outcome="error", error_category="database")
+            return JSONResponse(
+                status_code=500,
+                content={"detail": "A database error occurred"},
+            )
 
     return application
 

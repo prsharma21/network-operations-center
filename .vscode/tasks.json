@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start NOC backend",
+      "type": "shell",
+      "command": ".venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload --reload-dir app --reload-dir ..\\mock-services",
+      "options": {
+        "cwd": "${workspaceFolder}/telecom-noc-copilot/backend",
+        "env": { "PYTHONUNBUFFERED": "1" }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "noc" }
+    },
+    {
+      "label": "Start NOC frontend",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/telecom-noc-copilot/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "noc" }
+    },
+    {
+      "label": "Start NOC servers",
+      "dependsOn": ["Start NOC backend", "Start NOC frontend"],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    }
+  ]
+}

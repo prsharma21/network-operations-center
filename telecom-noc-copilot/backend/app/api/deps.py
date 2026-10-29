@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from functools import lru_cache
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
 from fastapi import Depends
-from sqlalchemy.orm import Session
 
-from app.db.oss_repository import SqlAlchemyOssRepository
-from app.db.session import yield_session
 from app.utils.settings import get_settings
 from oss_api.alarm_service import OssAlarmService
 from oss_api.deployment_service import OssDeploymentService
@@ -20,8 +17,16 @@ from oss_api.service import OssSiteService
 from oss_api.telemetry_service import OssTelemetryService
 from oss_api.ticket_service import OssTicketService
 
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
-def get_db_session() -> Generator[Session | None, None, None]:
+
+def get_db_session() -> Generator[Any, None, None]:
+    try:
+        from app.db.session import yield_session
+    except ImportError:
+        yield None
+        return
     yield from yield_session()
 
 
@@ -36,6 +41,8 @@ def get_oss_repository(
     json_repo = get_json_oss_repository()
     if db is None:
         return json_repo
+    from app.db.oss_repository import SqlAlchemyOssRepository
+
     return SqlAlchemyOssRepository(db, inventory=json_repo)
 
 

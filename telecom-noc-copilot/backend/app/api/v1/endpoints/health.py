@@ -2,13 +2,22 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException, status
 
-from app.db.session import check_database
 from app.schemas.health import HealthResponse, RootResponse
 from app.utils.settings import get_settings
 
 router = APIRouter(tags=["health"])
+
+
+def _database_state() -> Literal["ok", "disabled", "unavailable"]:
+    try:
+        from app.db.session import check_database
+    except ImportError:
+        return "disabled"
+    return check_database()
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -19,14 +28,14 @@ def get_health() -> HealthResponse:
         service=settings.app_name,
         version=settings.app_version,
         environment=settings.app_env,
-        database=check_database(),  # ok | disabled | unavailable
+        database=_database_state(),
     )
 
 
 @router.get("/health/ready")
 def get_ready() -> dict[str, str]:
     """Readiness: 503 when DATABASE_URL is set but PostgreSQL is unreachable."""
-    state = check_database()
+    state = _database_state()
     if state == "unavailable":
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
