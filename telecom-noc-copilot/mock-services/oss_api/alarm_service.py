@@ -56,8 +56,13 @@ class OssAlarmService:
                 raise SiteNotFound(payload.site_id)
 
             data = payload.model_dump(exclude_none=True)
-            if not data.get("alarm_id") and payload.source_event_id:
-                data["alarm_id"] = payload.source_event_id
+            if not data.get("alarm_id"):
+                # Prefer client source_event_id; otherwise allocate before validation.
+                data["alarm_id"] = (
+                    payload.source_event_id.strip()
+                    if payload.source_event_id and payload.source_event_id.strip()
+                    else self._repository.next_alarm_id()
+                )
             data["source_event_id"] = source_event_id
             data["source_severity"] = payload.severity
 

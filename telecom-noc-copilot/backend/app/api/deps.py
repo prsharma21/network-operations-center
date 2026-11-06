@@ -16,6 +16,7 @@ from oss_api.repository import JsonOssRepository, OssDataRepository
 from oss_api.service import OssSiteService
 from oss_api.telemetry_service import OssTelemetryService
 from oss_api.ticket_service import OssTicketService
+from oss_api.topology_service import OssTopologyService
 
 
 def get_db_session() -> Generator[Any, None, None]:
@@ -77,3 +78,9 @@ def get_incident_service(
     repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
 ) -> OssIncidentService:
     return OssIncidentService(repo)
+
+
+def get_topology_service(
+    repo: Annotated[OssDataRepository, Depends(get_oss_repository)],
+) -> OssTopologyService:
+    return OssTopologyService(repo)

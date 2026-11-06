@@ -65,7 +65,7 @@ class OssDataRepository(SiteRepository, Protocol):
 class JsonOssRepository:
     def __init__(self, data_dir: Path) -> None:
         self._data_dir = data_dir
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._sites_by_id: dict[str, dict[str, Any]] | None = None
         self._equipment_by_site: dict[str, list[dict[str, Any]]] | None = None
         self._topology_by_site: dict[str, list[dict[str, Any]]] | None = None

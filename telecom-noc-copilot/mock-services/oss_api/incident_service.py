@@ -16,6 +16,10 @@ class OssIncidentService:
     def __init__(self, repository: OssDataRepository) -> None:
         self._repository = repository
 
+    @property
+    def repository(self) -> OssDataRepository:
+        return self._repository
+
     def list_incidents(
         self,
         *,

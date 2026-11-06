@@ -23,9 +23,9 @@ telecom-noc-copilot/
 ├── frontend/          # React + TypeScript + Vite UI
 ├── backend/           # FastAPI application
 ├── mock-services/     # Simulated OSS / telemetry / deployment / ticketing APIs
-├── agent/             # LangGraph agent nodes, tools, prompts, runtime
+├── agent/             # Diagnostic tools, correlation engine, LangGraph supervisor
 ├── rag/               # Ingestion, retrieval, evaluation
-├── mcp-server/        # MCP tool server
+├── mcp-server/        # MCP tool server (schemas/tools placeholders)
 ├── data/              # Synthetic data, runbooks, scenarios
 ├── evaluation/        # Evaluation datasets and harnesses
 ├── infrastructure/    # Terraform modules and environments
@@ -72,6 +72,8 @@ pytest -q
 Stop the database with `docker compose stop postgres`. Do not use `docker compose down -v` as routine cleanup; it deletes the persisted volume.
 
 Database configuration, Alembic, seed commands, AWS RDS (Secrets Manager + TLS), networking requirements, and troubleshooting are in [docs/database.md](docs/database.md).
+
+Diagnostic tools (Day 15) that call the FastAPI mock OSS APIs are documented in [docs/day-15-diagnostic-tools.md](docs/day-15-diagnostic-tools.md). Alarm correlation and the LangGraph Supervisor workflow (Days 16–17) are documented in [docs/day-16-17-agents.md](docs/day-16-17-agents.md).
 
 Local Docker and RDS share the same SQLAlchemy models. Change `DATABASE_URL` (or `DATABASE_SECRET_ARN`) to switch; no code change is required. The backend must have an authorized network route and security-group access to RDS. Do not make the instance publicly accessible.
 

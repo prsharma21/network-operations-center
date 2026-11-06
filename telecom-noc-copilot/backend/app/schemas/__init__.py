@@ -15,6 +15,7 @@ from app.schemas.incident import GroundTruthIncident, Incident, IncidentCreate, 
 from app.schemas.site import NetworkSite, SiteEquipment, SiteListResponse, TopologyReference
 from app.schemas.telemetry import TelemetryListResponse, TelemetryMetric, TelemetryMetricCreate
 from app.schemas.ticket import Ticket, TicketListResponse
+from app.schemas.topology import TopologyListResponse, TopologyNode
 
 __all__ = [
     "AlarmListResponse",
@@ -33,6 +34,8 @@ __all__ = [
     "SiteListResponse",
     "Severity",
     "SiteEquipment",
+    "TopologyListResponse",
+    "TopologyNode",
     "TopologyReference",
     "SiteStatus",
     "TelemetryListResponse",

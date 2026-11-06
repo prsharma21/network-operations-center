@@ -3,7 +3,7 @@
 Mock OSS: sites, alarms, telemetry, deployments, tickets, and incidents.
 When DATABASE_URL is set, relational data is served from PostgreSQL; otherwise
 the synthetic JSON fixtures remain the source of truth. Tickets, equipment, and
-topology stay on JSON. No live network actions are performed.
+topology stay on JSON (including GET /topology). No live network actions are performed.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ from app.api.v1.endpoints.incidents import router as incidents_router
 from app.api.v1.endpoints.sites import router as sites_router
 from app.api.v1.endpoints.telemetry import router as telemetry_router
 from app.api.v1.endpoints.tickets import router as tickets_router
+from app.api.v1.endpoints.topology import router as topology_router
 from app.api.v1.router import api_router
 from app.utils.logging import configure_logging, log_structured
 from app.utils.settings import get_settings, redact_database_url
@@ -103,6 +104,7 @@ def create_app() -> FastAPI:
     application.include_router(deployments_router)
     application.include_router(tickets_router)
     application.include_router(incidents_router)
+    application.include_router(topology_router)
     application.include_router(api_router)
 
     @application.exception_handler(RequestValidationError)

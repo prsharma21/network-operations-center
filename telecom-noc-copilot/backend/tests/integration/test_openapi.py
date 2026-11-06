@@ -50,6 +50,11 @@ def test_openapi_includes_health_and_entity_schemas(client: TestClient) -> None:
     assert "/tickets" in paths
     assert "get" in paths["/tickets"]
     assert "post" not in paths["/tickets"]
+    assert "/topology" in paths
+    assert "get" in paths["/topology"]
+    assert "post" not in paths["/topology"]
+    topology_params = {item["name"] for item in paths["/topology"]["get"]["parameters"]}
+    assert topology_params >= {"site_id", "region", "page", "page_size"}
     assert "/sites" in paths
     assert "get" in paths["/sites"]
     assert "/incidents" in paths
@@ -81,6 +86,9 @@ def test_openapi_includes_health_and_entity_schemas(client: TestClient) -> None:
         "SiteListResponse",
         "Ticket",
         "TicketListResponse",
+        "TopologyListResponse",
+        "TopologyNode",
+        "TopologyReference",
         "HealthResponse",
     ):
         assert name in schemas, f"missing OpenAPI schema {name}"
