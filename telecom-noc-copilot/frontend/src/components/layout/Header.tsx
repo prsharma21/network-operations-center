@@ -37,10 +37,10 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
     event.preventDefault()
     const trimmed = query.trim()
     if (!trimmed) {
-      setNotice('Enter an alarm, site, or incident term to search.')
+      setNotice('Enter an alert, site, or problem term to search.')
       return
     }
-    setNotice('Global search is not connected. Use Alarms, Sites, or Incidents filters instead.')
+    setNotice('Global search is not connected. Use Alerts, Sites, or Problems filters instead.')
   }
 
   return (
@@ -80,14 +80,14 @@ export function Header({ title, breadcrumbs, menuButtonRef, mobileNavOpen, onTog
 
         <form className="header-search" role="search" onSubmit={onSearch}>
           <label className="visually-hidden" htmlFor="noc-search">
-            Search alarms, sites, and incidents
+            Search alerts, sites, and problems
           </label>
           <Icon name="search" size={16} />
           <input
             id="noc-search"
             type="search"
             value={query}
-            placeholder="Search alarms, sites, incidents"
+            placeholder="Search alerts, sites, problems"
             title="Search is not connected in this shell"
             onChange={(event) => setQuery(event.target.value)}
           />

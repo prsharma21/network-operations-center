@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/common/StatusBadge'
 import type { IncidentInvestigation } from '@/types/incident'
 import { investigationStatusLabel, investigationStatusTone } from '@/types/incident'
 import { formatDateTime } from '@/utils/format'
+import { friendlyIncidentTitle } from '@/utils/plainLanguage'
 
 interface IncidentSummaryProps {
   incident: IncidentInvestigation
@@ -12,7 +13,7 @@ interface IncidentSummaryProps {
 
 export function IncidentSummary({ incident }: IncidentSummaryProps) {
   return (
-    <Card title="Incident summary">
+    <Card title="Problem summary">
       <div className="investigation-status" role="status">
         <StatusBadge
           status={investigationStatusTone(incident.investigationStatus)}
@@ -20,22 +21,22 @@ export function IncidentSummary({ incident }: IncidentSummaryProps) {
         />
         <p>
           {incident.investigationStatus === 'completed'
-            ? 'Candidate causes are ranked hypotheses for operator review. They are not verified root causes.'
+            ? 'Possible causes are ready below. Please review them — nothing is confirmed yet.'
             : incident.investigationStatus === 'in_progress'
-              ? 'Collecting correlated alarms, telemetry, topology, and change history.'
+              ? 'Gathering alerts, site health, and recent changes…'
               : incident.investigationStatus === 'failed'
                 ? incident.investigationError ?? 'The last investigation attempt failed.'
-                : 'No investigation has been run yet. Evidence below is source data, not a diagnosis.'}
+                : 'Not investigated yet. Click Investigate to start.'}
         </p>
       </div>
       <dl className="detail-grid detail-grid--incident">
         <div>
-          <dt>Incident ID</dt>
+          <dt>Problem ID</dt>
           <dd>{incident.incidentId}</dd>
         </div>
         <div>
-          <dt>Title</dt>
-          <dd>{incident.title}</dd>
+          <dt>What happened</dt>
+          <dd>{friendlyIncidentTitle(incident.title)}</dd>
         </div>
         <div>
           <dt>Severity</dt>

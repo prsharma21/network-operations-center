@@ -9,8 +9,8 @@ interface SiteTopologyProps {
 
 const KIND_LABEL = {
   site: 'Site',
-  aggregation: 'Aggregation',
-  core: 'Core',
+  aggregation: 'Hub',
+  core: 'Core network',
 } as const
 
 export function SiteTopology({ topology }: SiteTopologyProps) {
@@ -19,12 +19,12 @@ export function SiteTopology({ topology }: SiteTopologyProps) {
   const ordered = [...nodes].sort((left, right) => rank(left.kind) - rank(right.kind))
 
   return (
-    <Card title="Connected topology">
+    <Card title="How this site connects">
       {nodes.length === 0 ? (
-        <EmptyState compact title="No topology" description="No topology links are available for this site." />
+        <EmptyState compact title="No connection map" description="No connection links are available for this site." />
       ) : (
         <div className="topology">
-          <svg className="topology__canvas" viewBox="0 0 720 160" role="img" aria-label="Site backhaul path to aggregation and core">
+          <svg className="topology__canvas" viewBox="0 0 720 160" role="img" aria-label="Site connection path to hub and core network">
             {ordered.map((node, index) => {
               const x = 80 + index * 220
               const fill = node.status === 'critical' ? '#fdecec' : '#eef3f9'

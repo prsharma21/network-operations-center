@@ -2,6 +2,11 @@ import { Card } from '@/components/common/Card'
 import { EmptyState } from '@/components/common/EmptyState'
 import type { CandidateCause, EvidenceRef } from '@/types/incident'
 import { formatDateTime } from '@/utils/format'
+import {
+  friendlyEvidenceSummary,
+  friendlyIncidentTitle,
+  friendlySourceLabel,
+} from '@/utils/plainLanguage'
 
 interface CandidateCausesProps {
   candidates: CandidateCause[]
@@ -14,14 +19,15 @@ function EvidenceList({ heading, items }: { heading: string; items: EvidenceRef[
     <div className="candidate__evidence">
       <h5>{heading}</h5>
       {items.length === 0 ? (
-        <p className="muted">None recorded.</p>
+        <p className="muted">None yet.</p>
       ) : (
         <ul>
           {items.map((item, index) => (
             <li key={`${heading}-${item.sourceEventId}-${index}`}>
-              <span>{item.summary}</span>
+              <span>{friendlyEvidenceSummary(item.summary)}</span>
               <span className="muted">
-                {item.source} · {item.sourceEventId}
+                {friendlySourceLabel(item.source)}
+                {item.sourceEventId ? ` · ${item.sourceEventId}` : ''}
                 {Number.isNaN(new Date(item.timestamp).getTime()) ? '' : ` · ${formatDateTime(item.timestamp)}`}
               </span>
             </li>
@@ -35,18 +41,17 @@ function EvidenceList({ heading, items }: { heading: string; items: EvidenceRef[
 export function CandidateCauses({
   candidates = [],
   investigationStatus,
-  emptyDescription = 'Run Investigate Incident to generate ranked hypotheses with supporting and contradictory evidence.',
+  emptyDescription = 'Click Investigate to see the most likely causes.',
 }: CandidateCausesProps) {
   return (
-    <Card title="Candidate root causes">
+    <Card title="Possible causes">
       <p className="candidate-disclaimer" role="note">
-        Ranked AI hypotheses only. Confidence is an uncertainty estimate, not a verified fact.
-        Do not treat any candidate as a confirmed root cause.
+        These are best guesses for review. They are not a final confirmed cause.
       </p>
       {candidates.length === 0 ? (
         <EmptyState
           compact
-          title={investigationStatus === 'in_progress' ? 'Ranking candidates' : 'No candidates yet'}
+          title={investigationStatus === 'in_progress' ? 'Checking possible causes…' : 'No possible causes yet'}
           description={emptyDescription}
         />
       ) : (
@@ -56,20 +61,20 @@ export function CandidateCauses({
               <div className="candidate__header">
                 <p className="candidate__rank">#{candidate.rank}</p>
                 <div>
-                  <p className="candidate__title">{candidate.title}</p>
-                  <p className="candidate__hypothesis">{candidate.hypothesis}</p>
+                  <p className="candidate__title">{friendlyIncidentTitle(candidate.title)}</p>
+                  <p className="candidate__hypothesis">{friendlyEvidenceSummary(candidate.hypothesis)}</p>
                 </div>
                 <div className="candidate__confidence">
                   <span className={`uncertainty uncertainty--${candidate.uncertainty}`}>
-                    {candidate.uncertainty} uncertainty
+                    {candidate.uncertainty === 'low' ? 'More confident' : candidate.uncertainty === 'high' ? 'Less confident' : 'Medium confidence'}
                   </span>
-                  <p>Estimated confidence {candidate.confidencePct}%</p>
-                  <p className="muted">Not a verified fact</p>
+                  <p>Confidence {candidate.confidencePct}%</p>
+                  <p className="muted">Needs human review</p>
                 </div>
               </div>
               <div className="candidate__columns">
-                <EvidenceList heading="Supporting evidence" items={candidate.supporting} />
-                <EvidenceList heading="Contradictory evidence" items={candidate.contradictory} />
+                <EvidenceList heading="Why this looks likely" items={candidate.supporting} />
+                <EvidenceList heading="What argues against it" items={candidate.contradictory} />
               </div>
             </li>
           ))}

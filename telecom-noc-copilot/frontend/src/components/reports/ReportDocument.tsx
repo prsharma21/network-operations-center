@@ -27,26 +27,26 @@ export function ReportDocument({ report }: ReportDocumentProps) {
       <section>
         <IncidentTimeline events={report.timeline} />
         <ProvenanceNote kind="observed">
-          Timeline entries keep their source event IDs. Alarm, KPI, and deployment rows are observed facts. Investigation and approval rows are labeled separately.
+          Timeline rows are real events. Alerts, health checks, and software changes are facts. Investigation and approval rows are labeled separately.
         </ProvenanceNote>
       </section>
 
       <section>
         <CorrelatedAlarms alarms={report.correlatedAlarms} />
         <ProvenanceNote kind="observed">
-          Correlated alarms are observed records. No additional alarms were inferred for this report.
+          Related alerts are real records. Extra alerts are not invented for this report.
         </ProvenanceNote>
       </section>
 
       <section>
         <IncidentTimeline
           events={report.kpiAnomalies}
-          title="KPI anomalies"
-          emptyTitle="No KPI anomalies recorded"
-          emptyDescription="This report does not invent telemetry. KPI rows appear only when the incident timeline already contains them."
+          title="Health warnings"
+          emptyTitle="No health warnings recorded"
+          emptyDescription="Health rows appear only when they were already recorded for this problem."
         />
         <ProvenanceNote kind="observed">
-          KPI anomalies are copied from the incident timeline. Missing KPI evidence is left blank.
+          Health warnings are copied from the problem timeline. Missing health evidence stays blank.
         </ProvenanceNote>
       </section>
 
@@ -54,22 +54,22 @@ export function ReportDocument({ report }: ReportDocumentProps) {
         <CandidateCauses
           candidates={report.candidates}
           investigationStatus={report.investigationStatus}
-          emptyDescription="No candidate causes were supplied for this report. Hypotheses are not invented when the investigation did not return them."
+          emptyDescription="No possible causes were returned for this report. Guesses are not invented."
         />
         <ProvenanceNote kind="hypothesis">
-          Confidence and uncertainty are backend-supplied estimates. They are not verified root causes.
+          Confidence scores are estimates. They are not confirmed root causes.
         </ProvenanceNote>
       </section>
 
-      <Card title="Retrieved runbook passages">
+      <Card title="Suggested checks from guides">
         <ProvenanceNote kind="observed">
-          Passages and source references are shown only when retrieval returned them. Unmatched knowledge is not filled in.
+          Guide excerpts appear only when a search found them. Missing guides are not filled in.
         </ProvenanceNote>
         {report.runbookPassages.length === 0 ? (
           <EmptyState
             compact
-            title={report.runbookRetrieval === 'empty' ? 'No relevant runbook evidence' : 'No runbook passages recorded'}
-            description="This report does not generate procedures. Source-grounded passages appear only when they were retrieved for the incident."
+            title={report.runbookRetrieval === 'empty' ? 'No matching guide found' : 'No guide excerpts recorded'}
+            description="This report does not invent troubleshooting steps. Excerpts appear only when they were found for the problem."
           />
         ) : (
           <div className="runbook-results">
@@ -82,29 +82,29 @@ export function ReportDocument({ report }: ReportDocumentProps) {
 
       <Card title="Recommended next steps">
         <ProvenanceNote kind="recommendation">
-          The next step is the recorded recommendation for human review. It is not a network command and is not executed from this report.
+          This is a suggestion for a person to review. It is not a network command and is not run from this report.
         </ProvenanceNote>
         {!report.recommendation ? (
-          <EmptyState compact title="No recommendation recorded" description="This report does not invent a remediation. A next step appears only when the incident already has a recommendation." />
+          <EmptyState compact title="No recommendation recorded" description="A next step appears only when the problem already has one." />
         ) : (
           <dl className="detail-grid detail-grid--incident">
             <div className="detail-grid__wide">
-              <dt>Proposed next step</dt>
+              <dt>Suggested next step</dt>
               <dd>{report.recommendation.proposedAction}</dd>
             </div>
             <div className="detail-grid__wide">
-              <dt>Rationale</dt>
+              <dt>Why</dt>
               <dd>{report.recommendation.rationale}</dd>
             </div>
             {report.recommendation.risks ? (
               <div className="detail-grid__wide">
-                <dt>Potential risks</dt>
+                <dt>Risks</dt>
                 <dd>{report.recommendation.risks}</dd>
               </div>
             ) : null}
             {report.recommendation.expectedOutcome ? (
               <div className="detail-grid__wide">
-                <dt>Expected outcome</dt>
+                <dt>Expected result</dt>
                 <dd>{report.recommendation.expectedOutcome}</dd>
               </div>
             ) : null}
@@ -112,9 +112,9 @@ export function ReportDocument({ report }: ReportDocumentProps) {
         )}
       </Card>
 
-      <Card title="Human approval and action status">
+      <Card title="Human decision">
         <ProvenanceNote kind="human_decision">
-          Approval records a human decision. Action status is not executed unless a backend execution record exists — this console never performs a network change.
+          Approval records a human decision. This screen never changes the live network.
         </ProvenanceNote>
         <dl className="detail-grid detail-grid--incident">
           <div>
@@ -122,7 +122,7 @@ export function ReportDocument({ report }: ReportDocumentProps) {
             <dd><StatusBadge status="pending" label="Not executed" /></dd>
           </div>
           <div>
-            <dt>Recorded action status</dt>
+            <dt>Recorded status</dt>
             <dd>{report.actionStatus.replaceAll('_', ' ')}</dd>
           </div>
         </dl>
@@ -132,16 +132,16 @@ export function ReportDocument({ report }: ReportDocumentProps) {
             <ApprovalRecord request={report.recommendation} />
           </>
         ) : (
-          <EmptyState compact title="No approval recorded" description="This report does not invent a human decision. Approve, reject, or defer on the incident or approvals page first." />
+          <EmptyState compact title="No approval recorded" description="Approve, reject, or defer on the problem or Approvals page first." />
         )}
       </Card>
 
-      <Card title="Audit history">
+      <Card title="Activity history">
         <ProvenanceNote kind="human_decision">
-          Audit rows are copied from recorded investigation and approval events. Missing history is not invented.
+          History rows come from saved investigation and approval events. Missing history is not invented.
         </ProvenanceNote>
         {report.audit.length === 0 && activity.length === 0 ? (
-          <EmptyState compact title="No audit history recorded" description="Human decisions and investigation steps appear here only when they were stored on the incident." />
+          <EmptyState compact title="No activity yet" description="Investigation steps and human decisions appear here only when they were saved." />
         ) : (
           <div className="report-audit">
             {report.audit.length > 0 ? (

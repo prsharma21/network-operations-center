@@ -33,7 +33,7 @@ export function NotificationMenu({ open, onOpenChange }: NotificationMenuProps) 
           <EmptyState
             compact
             title="No notifications"
-            description="Alarm and approval alerts will appear here when a notification service is connected."
+            description="Alert and approval notices will appear here when notifications are connected."
           />
         </div>
       ) : null}

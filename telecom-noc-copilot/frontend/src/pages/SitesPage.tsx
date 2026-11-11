@@ -69,7 +69,7 @@ export function SitesPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Site Health"
+        title="Site health"
         description={page.description}
         actions={<TimeRangeFilter value={range} onChange={onRangeChange} />}
       />
@@ -116,7 +116,7 @@ export function SitesPage() {
             {!selectedId && !loading ? (
               <EmptyState
                 title="Select a site"
-                description="Choose a site from the list to inspect health, alarms, deployments, and topology."
+                description="Choose a site to see its health, alerts, software changes, and links."
               />
             ) : null}
 
@@ -124,8 +124,8 @@ export function SitesPage() {
               <>
                 <SiteOverview site={data} />
                 <SiteKpiTiles kpis={data.kpis} />
-                <section className="dashboard-section" aria-label="Site KPI trends">
-                  <h3 className="dashboard-section__title">KPI trends</h3>
+                <section className="dashboard-section" aria-label="Site health trends">
+                  <h3 className="dashboard-section__title">Health over time</h3>
                   <TrendCharts range={range} points={data.trends} />
                 </section>
                 <SiteEquipmentList equipment={data.equipment} />
@@ -136,8 +136,8 @@ export function SitesPage() {
                 <SiteTopology topology={data.topology} />
                 <RecentIncidentsTable
                   incidents={data.incidents}
-                  title="Related incidents"
-                  emptyDescription="No incidents are linked to this site."
+                  title="Related problems"
+                  emptyDescription="No problems are linked to this site."
                 />
               </>
             ) : null}

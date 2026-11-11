@@ -10,9 +10,9 @@ interface SiteDeploymentsProps {
 
 export function SiteDeployments({ deployments = [] }: SiteDeploymentsProps) {
   return (
-    <Card title="Recent deployments">
+    <Card title="Recent software changes">
       {deployments.length === 0 ? (
-        <EmptyState compact title="No deployments" description="No configuration or software changes are recorded for this site." />
+        <EmptyState compact title="No software changes" description="No configuration or software changes are recorded for this site." />
       ) : (
         <ol className="event-list">
           {deployments.map((item) => (

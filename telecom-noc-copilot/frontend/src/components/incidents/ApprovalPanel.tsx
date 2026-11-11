@@ -16,17 +16,16 @@ export function ApprovalPanel({ incident, submitting, error, onDecide }: Approva
   const request = incident.recommendation
 
   return (
-    <Card title="Recommendation and approval">
+    <Card title="Recommended next step">
       {!request ? (
         <>
           <p className="approval-actions__safety" role="note">
-            Approval records a human decision. It does not mean a network action was executed.
-            This page never issues a live change. Backend authorization is required; disabled controls are not a security boundary.
+            Approve or reject only records a human decision. It does not change the live network.
           </p>
           <EmptyState
             compact
             title="No recommendation yet"
-            description="Run Investigate Incident to generate a proposed next step for human review. You can also open the Approvals queue after a recommendation exists."
+            description="Click Investigate this problem to generate a suggested next step for review."
           />
         </>
       ) : (

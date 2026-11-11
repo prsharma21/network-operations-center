@@ -5,6 +5,7 @@ import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
 import type { RecentIncident } from '@/types/dashboard'
 import { formatDateTime } from '@/utils/format'
+import { friendlyIncidentTitle } from '@/utils/plainLanguage'
 
 interface RecentIncidentsTableProps {
   incidents: RecentIncident[]
@@ -14,23 +15,23 @@ interface RecentIncidentsTableProps {
 
 export function RecentIncidentsTable({
   incidents = [],
-  title = 'Recent incidents',
-  emptyDescription = 'No incidents were updated in this time range.',
+  title = 'Recent problems',
+  emptyDescription = 'No problems were updated in this time range.',
 }: RecentIncidentsTableProps) {
   const navigate = useNavigate()
 
   return (
     <Card title={title} className="card--table">
       {incidents.length === 0 ? (
-        <EmptyState compact title="No incidents" description={emptyDescription} />
+        <EmptyState compact title="No problems" description={emptyDescription} />
       ) : (
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Incident ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Affected site</th>
+                <th scope="col">Problem ID</th>
+                <th scope="col">What happened</th>
+                <th scope="col">Site</th>
                 <th scope="col">Severity</th>
                 <th scope="col">Status</th>
                 <th scope="col">Last updated</th>
@@ -54,7 +55,7 @@ export function RecentIncidentsTable({
                   <td>
                     <span className="table-link">{incident.incidentId}</span>
                   </td>
-                  <td>{incident.title}</td>
+                  <td>{friendlyIncidentTitle(incident.title)}</td>
                   <td>{incident.siteName}</td>
                   <td>
                     <SeverityBadge severity={incident.severity} />

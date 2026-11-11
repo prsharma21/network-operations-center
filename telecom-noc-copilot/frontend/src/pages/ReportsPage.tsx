@@ -12,6 +12,7 @@ import { useIncidentReport, useReportCatalog } from '@/hooks/useIncidentReport'
 import { getNavItem } from '@/routes/navigation'
 import type { IncidentReport } from '@/types/report'
 import { formatDateTime } from '@/utils/format'
+import { friendlyIncidentTitle } from '@/utils/plainLanguage'
 
 const page = getNavItem('/reports')
 
@@ -38,8 +39,8 @@ export function ReportsPage() {
     return (
       <div className="page report-page">
         <PageHeader
-          title={loaded ? `Report ${loaded.reportId}` : 'Incident report'}
-          description="Read-only incident report. Observed facts, AI hypotheses, recommendations, and human decisions are labeled separately. No network change is executed here."
+          title={loaded ? `Report ${loaded.reportId}` : 'Problem report'}
+          description="Read-only summary of what happened. Facts, guesses, suggestions, and human decisions are labeled separately. Nothing here changes the live network."
           actions={
             <div className="report-page__actions">
               {loaded ? (
@@ -53,7 +54,7 @@ export function ReportsPage() {
                 </>
               ) : null}
               <Link className="btn btn--secondary" to={`/incidents/${incidentId}`}>
-                Open incident
+                Open problem
               </Link>
               <Link className="btn btn--secondary" to="/reports">
                 All reports
@@ -64,7 +65,7 @@ export function ReportsPage() {
 
         {report.loading ? (
           <div className="dashboard-state">
-            <LoadingIndicator label="Loading incident report" />
+            <LoadingIndicator label="Loading report" />
           </div>
         ) : null}
 
@@ -79,10 +80,10 @@ export function ReportsPage() {
         {report.notFound ? (
           <EmptyState
             title="Report not found"
-            description={report.error ?? 'No report has been generated for this incident. Investigate the incident first. This page does not invent evidence, approvals, or executed actions.'}
+            description={report.error ?? 'No report yet for this problem. Run Investigate on the problem page first.'}
             action={
               <div className="report-page__actions">
-                <Link className="btn btn--primary" to={`/incidents/${incidentId}`}>Investigate incident</Link>
+                <Link className="btn btn--primary" to={`/incidents/${incidentId}`}>Investigate problem</Link>
                 <Link className="btn btn--secondary" to="/reports">Back to reports</Link>
               </div>
             }
@@ -99,7 +100,7 @@ export function ReportsPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Incident reports"
+        title="Problem reports"
         description={page.description}
         actions={<Button variant="secondary" onClick={catalog.reload}>Refresh</Button>}
       />
@@ -120,12 +121,12 @@ export function ReportsPage() {
 
       {!catalog.loading && !catalog.error ? (
         <>
-          <Card title="Generated reports" className="card--table">
+          <Card title="Saved reports" className="card--table">
             {(catalog.data?.items.length ?? 0) === 0 ? (
               <EmptyState
                 title="No reports yet"
-                description="A report is created after incident investigation. This catalog does not invent reports, evidence, or executed actions."
-                action={<Link className="btn btn--secondary" to="/incidents">Open incidents</Link>}
+                description="A report is created after you investigate a problem."
+                action={<Link className="btn btn--secondary" to="/incidents">Open problems</Link>}
               />
             ) : (
               <div className="table-wrap">
@@ -133,10 +134,10 @@ export function ReportsPage() {
                   <thead>
                     <tr>
                       <th scope="col">Report</th>
-                      <th scope="col">Incident</th>
+                      <th scope="col">Problem</th>
                       <th scope="col">Severity</th>
                       <th scope="col">Status</th>
-                      <th scope="col">Generated</th>
+                      <th scope="col">Created</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -162,7 +163,7 @@ export function ReportsPage() {
                           >
                             {item.reportId}
                           </Link>
-                          <div className="muted">{item.title}</div>
+                          <div className="muted">{friendlyIncidentTitle(item.title)}</div>
                         </td>
                         <td>
                           <Link to={`/incidents/${item.incidentId}`} onClick={(event) => event.stopPropagation()}>

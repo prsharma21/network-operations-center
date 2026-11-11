@@ -96,9 +96,9 @@ export interface IncidentInvestigation {
 }
 
 export function investigationStatusLabel(status: InvestigationStatus): string {
-  if (status === 'not_started') return 'Not investigated'
-  if (status === 'in_progress') return 'Investigation in progress'
-  if (status === 'completed') return 'Hypotheses ready — not verified'
+  if (status === 'not_started') return 'Not investigated yet'
+  if (status === 'in_progress') return 'Looking into this problem…'
+  if (status === 'completed') return 'Possible causes ready for review'
   return 'Investigation failed'
 }
 

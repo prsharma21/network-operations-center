@@ -37,11 +37,11 @@ export function SiteOverview({ site }: SiteOverviewProps) {
             <dd>{site.siteType}</dd>
           </div>
           <div>
-            <dt>Backhaul</dt>
+            <dt>Connection type</dt>
             <dd>{site.backhaulType}</dd>
           </div>
           <div>
-            <dt>Criticality</dt>
+            <dt>Importance</dt>
             <dd>{site.criticality}</dd>
           </div>
           <div>
@@ -51,7 +51,7 @@ export function SiteOverview({ site }: SiteOverviewProps) {
             </dd>
           </div>
           <div>
-            <dt>Active alarms</dt>
+            <dt>Active alerts</dt>
             <dd>
               <Link className="table-link" to={`/alarms?site=${site.siteId}`}>
                 {site.activeAlarmCount}
@@ -61,10 +61,10 @@ export function SiteOverview({ site }: SiteOverviewProps) {
         </dl>
         <div className="site-overview__links">
           <Link className="btn btn--secondary" to={`/alarms?site=${site.siteId}`}>
-            Related alarms
+            Related alerts
           </Link>
           <Link className="btn btn--secondary" to={`/incidents?site=${site.siteId}`}>
-            Related incidents
+            Related problems
           </Link>
         </div>
       </div>

@@ -11,6 +11,7 @@ import { useIncidents } from '@/hooks/useIncidents'
 import { getNavItem } from '@/routes/navigation'
 import { investigationStatusLabel, investigationStatusTone } from '@/types/incident'
 import { formatDateTime } from '@/utils/format'
+import { friendlyIncidentTitle } from '@/utils/plainLanguage'
 
 const page = getNavItem('/incidents')
 
@@ -24,19 +25,19 @@ export function IncidentsPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Incidents"
+        title="Problems"
         description={page.description}
       />
 
       {loading ? (
         <div className="dashboard-state">
-          <LoadingIndicator label="Loading incidents" />
+          <LoadingIndicator label="Loading problems" />
         </div>
       ) : null}
 
       {error ? (
         <ErrorMessage
-          title="Incidents unavailable"
+          title="Problems unavailable"
           message={error}
           action={<Button variant="secondary" onClick={reload}>Retry</Button>}
         />
@@ -44,23 +45,23 @@ export function IncidentsPage() {
 
       {!loading && !error ? (
         <>
-          <Card title={status === 'open' ? 'Open incidents' : 'Incident catalog'} className="card--table">
+          <Card title={status === 'open' ? 'Open problems' : 'All problems'} className="card--table">
             {items.length === 0 ? (
               <EmptyState
-                title="No incidents"
-                description={status === 'open' ? 'There are no open incidents in this filter.' : 'GET /incidents returned no records.'}
+                title="No problems found"
+                description={status === 'open' ? 'There are no open problems right now.' : 'No problems matched this filter.'}
               />
             ) : (
               <div className="table-wrap">
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th scope="col">Incident</th>
+                      <th scope="col">Problem</th>
                       <th scope="col">Site</th>
                       <th scope="col">Severity</th>
                       <th scope="col">Priority</th>
                       <th scope="col">Status</th>
-                      <th scope="col">Investigation</th>
+                      <th scope="col">Status</th>
                       <th scope="col">Created</th>
                     </tr>
                   </thead>
@@ -83,7 +84,7 @@ export function IncidentsPage() {
                           <Link className="table-link" to={`/incidents/${item.incidentId}`} onClick={(event) => event.stopPropagation()}>
                             {item.incidentId}
                           </Link>
-                          <div className="muted">{item.title}</div>
+                          <div className="muted">{friendlyIncidentTitle(item.title)}</div>
                         </td>
                         <td>
                           <Link to={`/sites/${item.siteId}`} onClick={(event) => event.stopPropagation()}>{item.siteId}</Link>

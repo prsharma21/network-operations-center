@@ -13,7 +13,7 @@ interface ReportHeaderProps {
 
 export function ReportHeader({ report }: ReportHeaderProps) {
   return (
-    <Card title="Incident summary">
+    <Card title="Problem summary">
       <ProvenanceNote kind="observed">
         Identifiers, severity, sites, and operational status are copied from incident records. This summary is not a confirmed root cause.
       </ProvenanceNote>

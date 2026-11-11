@@ -148,20 +148,20 @@ export function AlarmsPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Alarms"
+        title="Alerts"
         description={page.description}
         actions={<Button variant="secondary" onClick={reload}>Refresh</Button>}
       />
 
       {loading && !data ? (
         <div className="dashboard-state">
-          <LoadingIndicator label="Loading alarms" />
+          <LoadingIndicator label="Loading alerts" />
         </div>
       ) : null}
 
       {error ? (
         <ErrorMessage
-          title="Alarms unavailable"
+          title="Alerts unavailable"
           message={error}
           action={<Button variant="secondary" onClick={reload}>Retry</Button>}
         />
@@ -194,12 +194,12 @@ export function AlarmsPage() {
           />
 
           <Card
-            title={`Alarm console (${data.total})`}
+            title={`Alert list (${data.total})`}
             className="card--table"
           >
             {data.items.length === 0 ? (
               <EmptyState
-                title="No alarms"
+                title="No alerts"
                 description={emptyDescription}
                 action={<Button variant="secondary" onClick={onClearFilters}>Clear filters</Button>}
               />

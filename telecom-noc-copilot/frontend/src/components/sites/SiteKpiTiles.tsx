@@ -25,25 +25,25 @@ const LEVEL_LABEL: Record<KpiLevel, string> = {
 const TILES: { name: KpiName; label: string; value: (kpis: SiteKpiSnapshot) => string; level: (kpis: SiteKpiSnapshot) => KpiLevel }[] = [
   {
     name: 'latencyMs',
-    label: 'Latency',
+    label: 'Delay',
     value: (kpis) => formatLatency(kpis.latencyMs),
     level: (kpis) => kpis.latencyLevel,
   },
   {
     name: 'throughputMbps',
-    label: 'Throughput',
+    label: 'Data speed',
     value: (kpis) => formatMbps(kpis.throughputMbps),
     level: (kpis) => kpis.throughputLevel,
   },
   {
     name: 'utilizationPct',
-    label: 'Utilization',
+    label: 'Usage',
     value: (kpis) => formatPercent(kpis.utilizationPct),
     level: (kpis) => kpis.utilizationLevel,
   },
   {
     name: 'droppedCallRatePct',
-    label: 'Dropped-call rate',
+    label: 'Dropped calls',
     value: (kpis) => formatPercent(kpis.droppedCallRatePct, 2),
     level: (kpis) => kpis.droppedCallLevel,
   },
@@ -62,7 +62,7 @@ const EMPTY_KPIS: SiteKpiSnapshot = {
 
 export function SiteKpiTiles({ kpis = EMPTY_KPIS }: SiteKpiTilesProps) {
   return (
-    <section className="kpi-grid kpi-grid--four" aria-label="Site key performance indicators">
+    <section className="kpi-grid kpi-grid--four" aria-label="Site health numbers">
       {TILES.map((tile) => {
         const level = tile.level(kpis)
         return (

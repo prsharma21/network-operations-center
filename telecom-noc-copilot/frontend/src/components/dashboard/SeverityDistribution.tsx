@@ -19,12 +19,12 @@ export function SeverityDistribution({ items }: SeverityDistributionProps) {
   const summary = items.map((item) => `${item.label} ${item.count}`).join(', ')
 
   return (
-    <Card title="Alarm severity distribution">
+    <Card title="Alerts by severity">
       {total === 0 ? (
-        <EmptyState compact title="No alarms" description="No alarms were recorded in this time range." />
+        <EmptyState compact title="No alerts" description="No alerts were recorded in this time range." />
       ) : (
         <>
-          <div className="chart-frame chart-frame--bar" role="img" aria-label={`Alarm severity distribution: ${summary}.`}>
+          <div className="chart-frame chart-frame--bar" role="img" aria-label={`Alerts by severity: ${summary}.`}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={items} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
                 <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#5c6b7e' }} />
@@ -34,7 +34,7 @@ export function SeverityDistribution({ items }: SeverityDistributionProps) {
                   width={72}
                   tick={{ fontSize: 12, fill: '#152033' }}
                 />
-                <Tooltip formatter={(value) => [value ?? 0, 'Alarms']} />
+                <Tooltip formatter={(value) => [value ?? 0, 'Alerts']} />
                 <Bar dataKey="count" isAnimationActive={false} radius={[0, 4, 4, 0]}>
                   {items.map((item) => (
                     <Cell key={item.bucket} fill={BAR_COLORS[item.bucket]} />

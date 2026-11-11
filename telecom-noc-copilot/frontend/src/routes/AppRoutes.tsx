@@ -50,11 +50,11 @@ export const router = createBrowserRouter([
         path: 'incidents/:incidentId',
         element: <IncidentDetailPage />,
         handle: {
-          title: 'Incident',
+          title: 'Problem',
           breadcrumbs: [
             { label: 'Network operations', to: '/' },
-            { label: 'Incidents', to: '/incidents' },
-            { label: 'Incident' },
+            { label: 'Problems', to: '/incidents' },
+            { label: 'Problem' },
           ],
         },
       },

@@ -3,6 +3,7 @@ import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
 import type { AlarmListItem, AlarmSortKey, SortDirection } from '@/types/alarm'
 import { formatDateTime } from '@/utils/format'
+import { friendlyAlarmLabel, friendlyComponentLabel } from '@/utils/plainLanguage'
 
 interface AlarmTableProps {
   items: AlarmListItem[]
@@ -17,15 +18,15 @@ interface AlarmTableProps {
 }
 
 const COLUMNS: Array<{ key: AlarmSortKey; label: string }> = [
-  { key: 'alarmId', label: 'Alarm ID' },
-  { key: 'alarmType', label: 'Alarm type' },
+  { key: 'alarmId', label: 'Alert ID' },
+  { key: 'alarmType', label: 'What it means' },
   { key: 'severity', label: 'Severity' },
-  { key: 'siteId', label: 'Site ID' },
+  { key: 'siteId', label: 'Site' },
   { key: 'region', label: 'Region' },
-  { key: 'networkComponent', label: 'Network component' },
-  { key: 'timestamp', label: 'Timestamp' },
+  { key: 'networkComponent', label: 'Area' },
+  { key: 'timestamp', label: 'When' },
   { key: 'status', label: 'Status' },
-  { key: 'relatedIncident', label: 'Related incident' },
+  { key: 'relatedIncident', label: 'Related problem' },
 ]
 
 export function AlarmTable({
@@ -54,7 +55,7 @@ export function AlarmTable({
                 ref={(element) => {
                   if (element) element.indeterminate = someSelected && !allSelected
                 }}
-                aria-label="Select all alarms on this page"
+                aria-label="Select all alerts on this page"
                 onChange={(event) => onTogglePage(event.target.checked)}
               />
             </th>
@@ -100,14 +101,17 @@ export function AlarmTable({
                 <span className="table-link">{item.alarmId}</span>
                 <div className="muted">{item.message}</div>
               </td>
-              <td>{item.alarmType.replaceAll('_', ' ')}</td>
+              <td>
+                <div>{friendlyAlarmLabel(item.alarmType)}</div>
+                <div className="muted">{item.alarmType.replaceAll('_', ' ')}</div>
+              </td>
               <td><SeverityBadge severity={item.severity} /></td>
               <td>
                 <Link to={`/sites/${item.siteId}`} onClick={(event) => event.stopPropagation()}>{item.siteId}</Link>
                 <div className="muted">{item.siteName}</div>
               </td>
               <td>{item.region}</td>
-              <td>{item.networkComponent}</td>
+              <td>{friendlyComponentLabel(item.networkComponent)}</td>
               <td>{formatDateTime(item.timestamp)}</td>
               <td><StatusBadge status={item.status} /></td>
               <td>

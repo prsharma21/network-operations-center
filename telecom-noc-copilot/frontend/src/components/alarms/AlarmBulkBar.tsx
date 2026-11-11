@@ -25,10 +25,10 @@ export function AlarmBulkBar({ selected, grouping, notice, onCopy, onGroup, onCl
   if (selected.length === 0) return null
 
   const bySite = groups(selected, (item) => `${item.siteId} · ${item.siteName}`)
-  const byCorrelation = groups(selected, (item) => item.correlationKey ?? 'No correlation key')
+  const byCorrelation = groups(selected, (item) => item.correlationKey ?? 'No related group')
 
   return (
-    <div className="alarm-bulk" role="region" aria-label="Selected alarms">
+    <div className="alarm-bulk" role="region" aria-label="Selected alerts">
       <div className="alarm-bulk__row">
         <p><strong>{selected.length}</strong> selected for viewing or grouping. These actions do not change the live network.</p>
         <div className="alarm-bulk__actions">
@@ -49,7 +49,7 @@ export function AlarmBulkBar({ selected, grouping, notice, onCopy, onGroup, onCl
             </ul>
           </section>
           <section>
-            <h4>By correlation</h4>
+            <h4>By related group</h4>
             <ul>
               {byCorrelation.map((group) => (
                 <li key={group.label}>{group.label} · {group.count}</li>

@@ -5,6 +5,7 @@ import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
 import type { SiteAlarmRow } from '@/types/site'
 import { formatDateTime } from '@/utils/format'
+import { friendlyAlarmLabel } from '@/utils/plainLanguage'
 
 interface SiteAlarmsTableProps {
   siteId: string
@@ -13,20 +14,20 @@ interface SiteAlarmsTableProps {
 
 export function SiteAlarmsTable({ siteId, alarms = [] }: SiteAlarmsTableProps) {
   return (
-    <Card title="Active alarms" className="card--table">
+    <Card title="Active alerts" className="card--table">
       {alarms.length === 0 ? (
-        <EmptyState compact title="No active alarms" description="This site has no open or acknowledged alarms." />
+        <EmptyState compact title="No active alerts" description="This site has no open alerts right now." />
       ) : (
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Alarm ID</th>
-                <th scope="col">Code</th>
+                <th scope="col">Alert ID</th>
+                <th scope="col">What it means</th>
                 <th scope="col">Message</th>
                 <th scope="col">Severity</th>
                 <th scope="col">Status</th>
-                <th scope="col">Raised</th>
+                <th scope="col">When</th>
               </tr>
             </thead>
             <tbody>
@@ -37,7 +38,7 @@ export function SiteAlarmsTable({ siteId, alarms = [] }: SiteAlarmsTableProps) {
                       {alarm.alarmId}
                     </Link>
                   </td>
-                  <td>{alarm.code}</td>
+                  <td>{friendlyAlarmLabel(alarm.code)}</td>
                   <td>{alarm.message}</td>
                   <td>
                     <SeverityBadge severity={alarm.severity} />

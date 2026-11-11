@@ -68,7 +68,7 @@ export function RunbooksPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Runbook guidance"
+        title="Troubleshooting guides"
         description={page.description}
         actions={enabled ? <Button variant="secondary" onClick={reload}>Retry</Button> : null}
       />
@@ -85,20 +85,20 @@ export function RunbooksPage() {
 
       {!enabled ? (
         <EmptyState
-          title="Search troubleshooting documents"
-          description="Enter a symptom, alarm type, technology, KPI, or incident ID. Results come from the retrieval API when available. Matching passages are not generated if the index has no document."
+          title="Search troubleshooting guides"
+          description="Type a symptom like ‘site cannot be reached’ or pick an alert type. Guides are suggestions for what to check."
         />
       ) : null}
 
       {enabled && loading ? (
         <div className="dashboard-state">
-          <LoadingIndicator label="Searching runbooks" />
+          <LoadingIndicator label="Searching guides" />
         </div>
       ) : null}
 
       {error ? (
         <ErrorMessage
-          title="Runbook search unavailable"
+          title="Guide search unavailable"
           message={error}
           action={<Button variant="secondary" onClick={reload}>Retry</Button>}
         />
@@ -106,15 +106,15 @@ export function RunbooksPage() {
 
       {enabled && !loading && !error && searched && (data?.passages.length ?? 0) === 0 ? (
         <EmptyState
-          title="No relevant runbook evidence"
-          description="Retrieval returned no matching passage for this query. No troubleshooting procedure was generated, and no citation was invented."
+          title="No matching guide found"
+          description="No guide matched this search. Nothing was invented."
           action={<Button variant="secondary" onClick={onClear}>Clear search</Button>}
         />
       ) : null}
 
       {data && data.passages.length > 0 && !loading ? (
         <div className="runbook-results">
-          <p className="muted">{data.passages.length} passage{data.passages.length === 1 ? '' : 's'} from indexed documents.</p>
+          <p className="muted">{data.passages.length} guide excerpt{data.passages.length === 1 ? '' : 's'} found.</p>
           {data.passages.map((passage) => (
             <RunbookPassageCard key={passage.id} passage={passage} terms={data.terms} />
           ))}

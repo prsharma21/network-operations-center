@@ -24,18 +24,18 @@ export function AlarmFilters({
     <div className="alarm-filters">
       <div className="alarm-filters__search">
         <Icon name="search" size={16} />
-        <label className="visually-hidden" htmlFor="alarm-search">Search alarms</label>
+        <label className="visually-hidden" htmlFor="alarm-search">Search alerts</label>
         <input
           id="alarm-search"
           type="search"
           value={search}
-          placeholder="Search ID, type, site, message…"
+          placeholder="Search ID, alert, site, message…"
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </div>
 
       <label className="alarm-filters__field">
-        <span>Severity</span>
+        <span>How bad</span>
         <select
           value={query.severity ?? ''}
           onChange={(event) => onQueryChange({ severity: event.target.value || undefined, page: 1 })}

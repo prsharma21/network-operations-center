@@ -13,6 +13,7 @@ import { InvestigationControls } from '@/components/incidents/InvestigationContr
 import { NetworkEvidence } from '@/components/incidents/NetworkEvidence'
 import { RunbookEvidence } from '@/components/incidents/RunbookEvidence'
 import { useIncident } from '@/hooks/useIncident'
+import { friendlyIncidentTitle } from '@/utils/plainLanguage'
 
 export function IncidentDetailPage() {
   const { incidentId } = useParams()
@@ -34,24 +35,28 @@ export function IncidentDetailPage() {
   return (
     <div className="page">
       <PageHeader
-        title={data ? `${data.incidentId}` : (incidentId ?? 'Incident')}
-        description={data?.title ?? 'Incident investigation workspace. Hypotheses are not verified root causes, and no network change is executed here.'}
+        title={data ? `${data.incidentId}` : (incidentId ?? 'Problem')}
+        description={
+          data
+            ? `${friendlyIncidentTitle(data.title)}. Review the story below — nothing is confirmed, and nothing changes the live network.`
+            : 'Open a problem, investigate it, and review possible causes.'
+        }
         actions={
           <Link className="btn btn--secondary" to="/incidents">
-            Back to incidents
+            Back to problems
           </Link>
         }
       />
 
       {loading ? (
         <div className="dashboard-state">
-          <LoadingIndicator label="Loading incident" />
+          <LoadingIndicator label="Loading problem" />
         </div>
       ) : null}
 
       {error ? (
         <ErrorMessage
-          title="Incident unavailable"
+          title="Problem unavailable"
           message={error}
           action={<Button variant="secondary" onClick={reload}>Retry</Button>}
         />
@@ -59,9 +64,9 @@ export function IncidentDetailPage() {
 
       {!loading && !error && !data ? (
         <EmptyState
-          title="Incident not found"
-          description="This incident ID is not in the current catalog."
-          action={<Link className="btn btn--secondary" to="/incidents">View incidents</Link>}
+          title="Problem not found"
+          description="This problem ID is not in the current list."
+          action={<Link className="btn btn--secondary" to="/incidents">View problems</Link>}
         />
       ) : null}
 

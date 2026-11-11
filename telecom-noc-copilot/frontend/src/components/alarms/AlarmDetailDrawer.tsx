@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/common/StatusBadge'
 import { useDismiss } from '@/hooks/useDismiss'
 import type { AlarmDetail } from '@/types/alarm'
 import { formatDateTime } from '@/utils/format'
+import { friendlyAlarmLabel, friendlyComponentLabel } from '@/utils/plainLanguage'
 
 interface AlarmDetailDrawerProps {
   open: boolean
@@ -56,8 +57,8 @@ export function AlarmDetailDrawer({
       >
         <header className="alarm-drawer__header">
           <div>
-            <p className="muted">Alarm detail</p>
-            <h2 id="alarm-drawer-title">{alarm?.alarmId ?? 'Alarm'}</h2>
+            <p className="muted">Alert details</p>
+            <h2 id="alarm-drawer-title">{alarm?.alarmId ?? 'Alert'}</h2>
           </div>
           <button type="button" className="icon-button" aria-label="Close alarm detail" onClick={onClose}>
             <Icon name="close" />
@@ -65,11 +66,11 @@ export function AlarmDetailDrawer({
         </header>
 
         <div className="alarm-drawer__body">
-          {loading ? <LoadingIndicator label="Loading alarm" /> : null}
-          {error ? <ErrorMessage title="Alarm detail unavailable" message={error} /> : null}
+          {loading ? <LoadingIndicator label="Loading alert" /> : null}
+          {error ? <ErrorMessage title="Alert detail unavailable" message={error} /> : null}
 
           {!loading && !error && !alarm ? (
-            <EmptyState compact title="Alarm not found" description="This alarm ID is not in the current catalog." />
+            <EmptyState compact title="Alert not found" description="This alert ID is not in the current list." />
           ) : null}
 
           {alarm && !loading ? (
@@ -82,37 +83,37 @@ export function AlarmDetailDrawer({
 
               <dl className="detail-grid detail-grid--drawer">
                 <div>
-                  <dt>Alarm type</dt>
-                  <dd>{alarm.alarmType}</dd>
+                  <dt>What it means</dt>
+                  <dd>{friendlyAlarmLabel(alarm.alarmType)}</dd>
                 </div>
                 <div>
-                  <dt>Raised</dt>
+                  <dt>When</dt>
                   <dd>{formatDateTime(alarm.timestamp)}</dd>
                 </div>
                 <div>
-                  <dt>Network component</dt>
-                  <dd>{alarm.networkComponent}</dd>
+                  <dt>Area</dt>
+                  <dd>{friendlyComponentLabel(alarm.networkComponent)}</dd>
                 </div>
                 <div>
                   <dt>Source</dt>
                   <dd>{alarm.source ?? '—'}</dd>
                 </div>
                 <div>
-                  <dt>Correlation key</dt>
+                  <dt>Grouping key</dt>
                   <dd>{alarm.correlationKey ?? '—'}</dd>
                 </div>
                 <div>
-                  <dt>Related incident</dt>
+                  <dt>Related problem</dt>
                   <dd>
                     {alarm.relatedIncident ? (
                       <Link to={`/incidents/${alarm.relatedIncident.incidentId}`}>{alarm.relatedIncident.incidentId}</Link>
-                    ) : 'None recorded'}
+                    ) : 'None yet'}
                   </dd>
                 </div>
               </dl>
 
               <section className="alarm-drawer__section">
-                <h3>Site context</h3>
+                <h3>Site details</h3>
                 {site ? (
                   <dl className="detail-grid detail-grid--drawer">
                     <div>
@@ -124,7 +125,7 @@ export function AlarmDetailDrawer({
                       <dd>{site.region}</dd>
                     </div>
                     <div>
-                      <dt>Technology</dt>
+                      <dt>Network type</dt>
                       <dd>{site.technology}</dd>
                     </div>
                     <div>
@@ -141,12 +142,12 @@ export function AlarmDetailDrawer({
                     </div>
                   </dl>
                 ) : (
-                  <p className="muted">No additional site record is attached to this alarm.</p>
+                  <p className="muted">No extra site details are attached to this alert.</p>
                 )}
               </section>
 
               <section className="alarm-drawer__section">
-                <h3>Related alarms</h3>
+                <h3>Related alerts</h3>
                 {detail && detail.relatedAlarms.length > 0 ? (
                   <ul className="alarm-related">
                     {detail.relatedAlarms.map((item) => (
@@ -154,17 +155,17 @@ export function AlarmDetailDrawer({
                         <Button variant="ghost" onClick={() => onOpenRelated(item.alarmId)}>
                           {item.alarmId}
                         </Button>
-                        <span className="muted">{item.alarmType} · {formatDateTime(item.timestamp)}</span>
+                        <span className="muted">{friendlyAlarmLabel(item.alarmType)} · {formatDateTime(item.timestamp)}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="muted">No correlated alarms share this key or scenario.</p>
+                  <p className="muted">No other related alerts were found.</p>
                 )}
               </section>
 
               <section className="alarm-drawer__section">
-                <h3>Source payload</h3>
+                <h3>Technical details</h3>
                 <pre className="alarm-payload">{JSON.stringify(alarm.payload, null, 2)}</pre>
               </section>
             </>

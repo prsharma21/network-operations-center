@@ -2,12 +2,13 @@ import { Card } from '@/components/common/Card'
 import { EmptyState } from '@/components/common/EmptyState'
 import type { EvidenceCategory, NetworkEvidenceItem } from '@/types/incident'
 import { formatDateTime } from '@/utils/format'
+import { friendlyEvidenceSummary, friendlyMetricDetail, friendlyTimelineTitle } from '@/utils/plainLanguage'
 
 const CATEGORY_LABEL: Record<EvidenceCategory, string> = {
-  metric: 'Site metrics',
-  inventory: 'Inventory',
-  topology: 'Topology',
-  deployment: 'Recent deployment',
+  metric: 'Site health',
+  inventory: 'Site details',
+  topology: 'Network links',
+  deployment: 'Recent software changes',
 }
 
 const CATEGORIES: EvidenceCategory[] = ['metric', 'inventory', 'topology', 'deployment']
@@ -18,9 +19,13 @@ interface NetworkEvidenceProps {
 
 export function NetworkEvidence({ items = [] }: NetworkEvidenceProps) {
   return (
-    <Card title="Network evidence">
+    <Card title="What we found">
       {items.length === 0 ? (
-        <EmptyState compact title="No evidence attached" description="Metrics, inventory, topology, and deployments will be listed with source event IDs." />
+        <EmptyState
+          compact
+          title="No evidence yet"
+          description="Run Investigate to collect site health, links, and recent changes."
+        />
       ) : (
         <div className="evidence-groups">
           {CATEGORIES.map((category) => {
@@ -32,10 +37,22 @@ export function NetworkEvidence({ items = [] }: NetworkEvidenceProps) {
                 <ul>
                   {group.map((item) => (
                     <li key={item.id}>
-                      <p className="evidence-group__title">{item.title}</p>
-                      <p>{item.detail}</p>
+                      <p className="evidence-group__title">
+                        {friendlyTimelineTitle(
+                          item.title,
+                          /kpi|latency|throughput|utilization|dropped/i.test(item.title + item.detail)
+                            ? 'kpi'
+                            : undefined,
+                        )}
+                      </p>
+                      <p>
+                        {/latency_ms=|throughput_mbps=|utilization_pct=|dropped_call_rate_pct=|state=abnormal/i.test(item.detail)
+                          ? friendlyMetricDetail(item.detail)
+                          : friendlyEvidenceSummary(item.detail)}
+                      </p>
                       <p className="muted">
-                        {formatDateTime(item.timestamp)} · source {item.sourceEventId}
+                        {formatDateTime(item.timestamp)}
+                        {item.sourceEventId ? ` · ref ${item.sourceEventId}` : ''}
                       </p>
                     </li>
                   ))}

@@ -16,41 +16,41 @@ export function InvestigationControls({ incident, investigating, onInvestigate }
   const failed = incident.investigationStatus === 'failed'
 
   return (
-    <Card title="Investigation controls">
+    <Card title="Investigate">
       <div className="investigation-controls">
         <Button
           onClick={onInvestigate}
           disabled={running}
           aria-busy={running}
         >
-          Investigate Incident
+          Investigate this problem
         </Button>
         {running ? (
           <div className="investigation-controls__state" role="status">
-            <LoadingIndicator size="sm" label="Investigation in progress" />
-            <p className="muted">A second request is disabled until this run finishes. No remediation is executed from this page.</p>
+            <LoadingIndicator size="sm" label="Looking into this…" />
+            <p className="muted">Please wait. This only reviews data — it does not change the live network.</p>
           </div>
         ) : null}
         {completed && !running ? (
           <div className="investigation-controls__state investigation-controls__state--success" role="status">
-            <p>Investigation finished. Review ranked hypotheses below — they are not a confirmed root cause.</p>
+            <p>Done. Scroll down to review possible causes.</p>
             {incident.reportHref ? (
               <p>
-                Generated report:{' '}
+                Report:{' '}
                 <Link to={incident.reportHref}>{incident.reportId ?? 'Open report'}</Link>
               </p>
             ) : (
-              <p className="muted">No report identifier was returned.</p>
+              <p className="muted">No report link yet.</p>
             )}
           </div>
         ) : null}
         {failed && !running ? (
           <div className="investigation-controls__state investigation-controls__state--failed" role="alert">
-            <p>{incident.investigationError ?? 'Investigation failed. You can retry.'}</p>
+            <p>{incident.investigationError ?? 'Investigation failed. You can try again.'}</p>
           </div>
         ) : null}
         {!running && !completed && !failed ? (
-          <p className="muted">Investigation correlates alarms and evidence only. Remediation execution is not available here.</p>
+          <p className="muted">This reviews alerts and evidence only. It will not change the live network.</p>
         ) : null}
       </div>
     </Card>

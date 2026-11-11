@@ -5,6 +5,7 @@ import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { StatusBadge } from '@/components/common/StatusBadge'
 import type { CorrelatedAlarm } from '@/types/incident'
 import { formatDateTime } from '@/utils/format'
+import { friendlyAlarmLabel } from '@/utils/plainLanguage'
 
 interface CorrelatedAlarmsProps {
   alarms: CorrelatedAlarm[]
@@ -12,20 +13,20 @@ interface CorrelatedAlarmsProps {
 
 export function CorrelatedAlarms({ alarms = [] }: CorrelatedAlarmsProps) {
   return (
-    <Card title="Correlated alarms" className="card--table">
+    <Card title="Related alerts" className="card--table">
       {alarms.length === 0 ? (
-        <EmptyState compact title="No correlated alarms" description="This incident has no linked alarm IDs." />
+        <EmptyState compact title="No related alerts" description="This problem has no linked alerts yet." />
       ) : (
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Alarm ID</th>
-                <th scope="col">Type</th>
+                <th scope="col">Alert</th>
+                <th scope="col">What it means</th>
                 <th scope="col">Site</th>
                 <th scope="col">Severity</th>
                 <th scope="col">Status</th>
-                <th scope="col">Raised</th>
+                <th scope="col">When</th>
               </tr>
             </thead>
             <tbody>
@@ -37,7 +38,7 @@ export function CorrelatedAlarms({ alarms = [] }: CorrelatedAlarmsProps) {
                     </Link>
                   </td>
                   <td>
-                    <div>{alarm.alarmType}</div>
+                    <div>{friendlyAlarmLabel(alarm.alarmType)}</div>
                     <div className="muted">{alarm.message}</div>
                   </td>
                   <td>

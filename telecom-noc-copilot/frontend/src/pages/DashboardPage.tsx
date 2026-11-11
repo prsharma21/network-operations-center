@@ -48,7 +48,7 @@ export function DashboardPage() {
   return (
     <div className="page">
       <PageHeader
-        title="Network Health Dashboard"
+        title="Network health"
         description={page.description}
         actions={<TimeRangeFilter value={range} onChange={onRangeChange} />}
       />
@@ -71,34 +71,34 @@ export function DashboardPage() {
         <>
           <section className="kpi-grid" aria-label="Network health indicators">
             <KpiCard
-              label="Active Alarms"
+              label="Active alerts"
               value={formatNumber(data.kpis.activeAlarms)}
               hint="Open and acknowledged"
               to={`/alarms?status=active&${query}`}
             />
             <KpiCard
-              label="Critical Alarms"
+              label="Critical alerts"
               value={formatNumber(data.kpis.criticalAlarms)}
-              hint="Not cleared"
+              hint="Most urgent"
               to={`/alarms?severity=critical&${query}`}
               tone={data.kpis.criticalAlarms > 0 ? 'critical' : 'default'}
             />
             <KpiCard
-              label="Impacted Sites"
+              label="Sites with issues"
               value={formatNumber(data.kpis.impactedSites)}
-              hint="Degraded or alarming"
+              hint="Degraded or alerting"
               to={`/sites?status=impacted&${query}`}
             />
             <KpiCard
-              label="Open Incidents"
+              label="Open problems"
               value={formatNumber(data.kpis.openIncidents)}
-              hint="Requires operator attention"
+              hint="Needs review"
               to={`/incidents?status=open&${query}`}
             />
             <KpiCard
-              label="Average Network Latency"
+              label="Average delay"
               value={formatLatency(data.kpis.averageLatencyMs)}
-              hint="Reachable sites in range"
+              hint="Across reachable sites"
               to={`/?${query}#network-trends`}
             />
           </section>
@@ -106,12 +106,12 @@ export function DashboardPage() {
           {hasNoData ? (
             <EmptyState
               title="No data for this time range"
-              description="No alarms, incidents, or telemetry are available in the selected window. Try Last 7 Days."
+              description="No alerts or problems are available in the selected window. Try Last 7 Days."
             />
           ) : (
             <>
               <section id="network-trends" className="dashboard-section" aria-label="Network trends">
-                <h3 className="dashboard-section__title">Network trends</h3>
+                <h3 className="dashboard-section__title">Health over time</h3>
                 <TrendCharts range={range} points={data.trends} />
               </section>
 

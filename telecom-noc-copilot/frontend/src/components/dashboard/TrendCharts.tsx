@@ -26,10 +26,10 @@ interface SeriesConfig {
 }
 
 const SERIES: SeriesConfig[] = [
-  { key: 'latencyMs', title: 'Latency', color: '#0b1f3a', unit: 'ms', digits: 1 },
-  { key: 'throughputMbps', title: 'Throughput', color: '#1d4e89', unit: 'Mbps', digits: 1 },
-  { key: 'utilizationPct', title: 'Utilization', color: '#8a4b08', unit: '%', digits: 1 },
-  { key: 'droppedCallRatePct', title: 'Dropped-call rate', color: '#9f2c23', unit: '%', digits: 2 },
+  { key: 'latencyMs', title: 'Delay', color: '#0b1f3a', unit: 'ms', digits: 1 },
+  { key: 'throughputMbps', title: 'Data speed', color: '#1d4e89', unit: 'Mbps', digits: 1 },
+  { key: 'utilizationPct', title: 'Usage', color: '#8a4b08', unit: '%', digits: 1 },
+  { key: 'droppedCallRatePct', title: 'Dropped calls', color: '#9f2c23', unit: '%', digits: 2 },
 ]
 
 export function TrendCharts({ range, points }: TrendChartsProps) {
@@ -55,7 +55,7 @@ function TrendChart({ range, points, series }: { range: TimeRange; points: Trend
           <EmptyState
             compact
             title="No trend data"
-            description="No telemetry samples fall in this time range."
+            description="No health samples fall in this time range."
           />
         ) : (
           <>
